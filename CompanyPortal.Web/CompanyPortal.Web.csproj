@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CompanyPortal.Application\CompanyPortal.Application.csproj" />
+    <ProjectReference Include="..\CompanyPortal.Shared\CompanyPortal.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
