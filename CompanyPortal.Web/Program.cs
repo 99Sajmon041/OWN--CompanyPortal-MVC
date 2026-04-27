@@ -1,4 +1,22 @@
+using CompanyPortal.Infrastructure.Extentions;
+using CompanyPortal.Application.Extentions;
+using Microsoft.AspNetCore.DataProtection;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+var keysDirectory = new DirectoryInfo(@"C:\AppKeys\CompanyPortal");
+
+if (!keysDirectory.Exists)
+{
+    keysDirectory.Create();
+}
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(keysDirectory)
+    .SetApplicationName("CompanyPortal");
 
 builder.Services.AddControllersWithViews();
 
