@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using CompanyPortal.Application.Extentions;
 using CompanyPortal.Infrastructure.Extentions;
 using CompanyPortal.Web.Middlewares;
+using CompanyPortal.Web.Seed;
+using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 
@@ -35,6 +36,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<DefaultSeeder>();
+builder.Services.AddScoped<ApplicationUserClaimsMiddleware>();
 
 var app = builder.Build();
 
@@ -44,10 +47,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+using var scope = app.Services.CreateScope();
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DefaultSeeder>();
+    await seeder.SeedAdminUserAsync();
+}
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseMiddleware<ApplicationUserClaimsMiddleware>();
 app.UseAuthorization();
 
 app.UseMiddleware<RequestLoggingMiddleware>();
