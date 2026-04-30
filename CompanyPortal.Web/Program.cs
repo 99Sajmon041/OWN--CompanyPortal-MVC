@@ -38,6 +38,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<DefaultSeeder>();
 builder.Services.AddScoped<ApplicationUserClaimsMiddleware>();
+builder.Services.AddScoped<EmployeeProfileRequiredMiddleware>();
 
 var app = builder.Build();
 
@@ -58,6 +59,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseMiddleware<ApplicationUserClaimsMiddleware>();
+app.UseMiddleware<EmployeeProfileRequiredMiddleware>();
 app.UseAuthorization();
 
 app.UseMiddleware<RequestLoggingMiddleware>();

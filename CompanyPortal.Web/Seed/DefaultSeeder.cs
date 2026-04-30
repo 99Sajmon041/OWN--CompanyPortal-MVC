@@ -21,55 +21,72 @@ public sealed class DefaultSeeder(
     {
         await SeedDefaultRolesAsync();
 
-        if (!await ExistsAdminUserAsync())
+        if (await ExistsAdminUserAsync())
         {
-            var adminUser = new ApplicationUser
-            {
-                UserName = userOptions.Value.UserName,
-                Email = userOptions.Value.Email,
-                DomainUserName = userOptions.Value.DomainUserName,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
+            return;
+        }
 
-            var userResult = await userManager.CreateAsync(adminUser);
-            if (!userResult.Succeeded)
-            {
-                Console.WriteLine($"Failed to create admin account. Error: {string.Join(", ", userResult.Errors)}");
-                return;
-            }
+        await using var transaction = await context.Database.BeginTransactionAsync();
 
-            var roleResult = await userManager.AddToRoleAsync(adminUser, roleOptions.Value.First(x => x.Equals("MasterAdmin")));
-            if (!roleResult.Succeeded)
-            {
-                Console.WriteLine($"Create role for admin seed account failed. Error: {string.Join(", ", roleResult.Errors)}");
-                return;
-            }
+        var adminUser = new ApplicationUser
+        {
+            UserName = userOptions.Value.UserName,
+            Email = userOptions.Value.Email,
+            DomainUserName = userOptions.Value.DomainUserName,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+            IsEmployeeProfileCompleted = true
+        };
 
-            var department = new Department
-            {
-                DepartmentName = departmentOptions.Value.DepartmentName
-            };
+        var userResult = await userManager.CreateAsync(adminUser);
+        if (!userResult.Succeeded)
+        {
+            await transaction.RollbackAsync();
+            Console.WriteLine($"Failed to create admin account. Error: {string.Join(", ", userResult.Errors.Select(x => x.Description))}");
+            return;
+        }
 
-            var position = new Position
-            {
-                PositionName = positionsOptions.Value.PositionName,
-                Department = department
-            };
+        var roleResult = await userManager.AddToRoleAsync(adminUser, "MasterAdmin");
+        if (!roleResult.Succeeded)
+        {
+            await transaction.RollbackAsync();
+            Console.WriteLine($"Failed to add MasterAdmin role. Error: {string.Join(", ", roleResult.Errors.Select(x => x.Description))}");
+            return;
+        }
 
-            var employee = new Employee
-            {
-                PersonalNumber = employeeOptions.Value.PersonalNumber,
-                FirstName = employeeOptions.Value.FirstName,
-                LastName = employeeOptions.Value.LastName,
-                ApplicationUserId = adminUser.Id,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                Position = position
-            };
+        var department = new Department
+        {
+            DepartmentName = departmentOptions.Value.DepartmentName
+        };
 
-            context.Employees.Add(employee);
+        var position = new Position
+        {
+            PositionName = positionsOptions.Value.PositionName,
+            Department = department
+        };
+
+        var employee = new Employee
+        {
+            PersonalNumber = employeeOptions.Value.PersonalNumber,
+            FirstName = employeeOptions.Value.FirstName,
+            LastName = employeeOptions.Value.LastName,
+            ApplicationUserId = adminUser.Id,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+            Position = position
+        };
+
+        context.Employees.Add(employee);
+
+        try
+        {
             await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            Console.WriteLine($"Failed to seed admin employee data. Error: {ex.Message}");
         }
     }
 
