@@ -23,12 +23,22 @@ public sealed class RequestLoggingMiddleware(RequestDelegate next)
             try
             {
                 await next(context);
+
+                stopwatch.Stop();
+
+                Log.Information("Request {Method} {Endpoint} completed with status {StatusCode} in {ElapsedMilliseconds} ms. User: {User}. Query: {QueryString}",
+                    method,
+                    endpoint,
+                    context.Response.StatusCode,
+                    stopwatch.ElapsedMilliseconds,
+                    userName,
+                    queryString);
             }
             catch (Exception ex)
             {
                 stopwatch.Stop();
 
-                Log.Error(ex,"Unhandled exception during request {Method} {Endpoint}. User: {User}. Query: {QueryString}",
+                Log.Error(ex, "Unhandled exception during request {Method} {Endpoint}. User: {User}. Query: {QueryString}",
                     method,
                     endpoint,
                     userName,

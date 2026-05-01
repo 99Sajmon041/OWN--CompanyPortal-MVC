@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Domain.Entities;
 using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
+using CompanyPortal.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,11 +16,17 @@ public sealed class DefaultSeeder(
     IOptions<SeedAdminEmployee> employeeOptions,
     IOptions<SeedPosition> positionsOptions,
     IOptions<SeedDepartment> departmentOptions,
+    IOptions<SeedBuilding> buildingOptions,
     CompanyPortalDbContext context)
 {
     public async Task SeedAdminUserAsync()
     {
-        await SeedDefaultRolesAsync();
+        bool rolesSeeded = await SeedDefaultRolesAsync();
+
+        if (!rolesSeeded)
+        {
+            return;
+        }
 
         if (await ExistsAdminUserAsync())
         {
@@ -54,15 +61,24 @@ public sealed class DefaultSeeder(
             return;
         }
 
+        var building = new Building
+        {
+            BuildingName = buildingOptions.Value.BuildingName,
+            Description = buildingOptions.Value.Description,
+            Code = buildingOptions.Value.Code
+        };
+
         var department = new Department
         {
-            DepartmentName = departmentOptions.Value.DepartmentName
+            DepartmentName = departmentOptions.Value.DepartmentName,
+            Building = building
         };
 
         var position = new Position
         {
             PositionName = positionsOptions.Value.PositionName,
-            Department = department
+            Department = department,
+            PositionLevel = PositionLevel.GroupLeader
         };
 
         var employee = new Employee
@@ -90,19 +106,23 @@ public sealed class DefaultSeeder(
         }
     }
 
-    private async Task SeedDefaultRolesAsync()
+    private async Task<bool> SeedDefaultRolesAsync()
     {
         foreach (var role in roleOptions.Value)
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
                 var roleResult = await roleManager.CreateAsync(new IdentityRole(role));
+
                 if (!roleResult.Succeeded)
                 {
-                    Console.WriteLine($"Create role: {role} failed. Error: {string.Join(", ", roleResult.Errors)}");
+                    Console.WriteLine($"Create role: {role} failed. Error: {string.Join(", ", roleResult.Errors.Select(x => x.Description))}");
+                    return false;
                 }
             }
         }
+
+        return true;
     }
 
     private async Task<bool> ExistsAdminUserAsync()

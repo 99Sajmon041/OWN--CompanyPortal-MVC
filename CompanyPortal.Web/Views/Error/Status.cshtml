@@ -9,12 +9,12 @@
 
 @if (statusCode == 403)
 {
-    <p>Nemáte oprávnění pro přístup k této části aplikace.</p>
+    <p>Nemáte oprávnění pro přístup k této části aplikace - Status kód: @statusCode</p>
 
 }
 else if (statusCode == 404)
 {
-    <p>Požadovaná stránka nebyla nalezena.</p>
+    <p>Požadovaná stránka nebyla nalezena - Status kód: @statusCode</p>
 }
 else
 {

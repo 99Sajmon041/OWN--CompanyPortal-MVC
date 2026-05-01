@@ -10,6 +10,7 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
     public DbSet<Employee> Employees { get; set; } = default!;
     public DbSet<Position> Positions { get; set; } = default!;
     public DbSet<Department> Departments { get; set; } = default!;
+    public DbSet<Building> Buildings { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -91,6 +92,28 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
                 .IsRequired();
 
             entity.HasIndex(x => x.DomainUserName)
+                .IsUnique();
+        });
+
+        builder.Entity<Building>(entity =>
+        {
+            entity.Property(x => x.BuildingName)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(x => x.Description)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Code)
+                .IsRequired()
+                .HasMaxLength(10);
+
+            entity.HasMany(x => x.Departments)
+                .WithOne(x => x.Building)
+                .HasForeignKey(x => x.BuildingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => x.Code)
                 .IsUnique();
         });
     }

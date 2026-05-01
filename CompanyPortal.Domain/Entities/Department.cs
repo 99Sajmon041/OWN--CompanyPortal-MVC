@@ -5,4 +5,6 @@ public sealed class Department
     public int Id { get; set; }
     public string DepartmentName { get; set; } = default!;
     public ICollection<Position> Positions { get; set; } = [];
+    public Building Building { get; set; } = default!;
+    public int BuildingId { get; set; }
 }
