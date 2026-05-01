@@ -42,9 +42,10 @@ builder.Services.AddScoped<EmployeeProfileRequiredMiddleware>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler("/Error/Unexpected");
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -56,6 +57,8 @@ using var scope = app.Services.CreateScope();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseStatusCodePagesWithReExecute("/Error/StatusCode", "?code={0}");
 
 app.UseAuthentication();
 app.UseMiddleware<ApplicationUserClaimsMiddleware>();

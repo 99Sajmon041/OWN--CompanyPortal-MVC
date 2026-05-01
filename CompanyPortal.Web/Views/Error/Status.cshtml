@@ -1,0 +1,22 @@
+﻿@{
+    int statusCode = ViewData["StatusCode"] as int? ?? 500;
+    ViewData["Title"] = $"Chyba {statusCode}";
+}
+
+<div class="alert alert-danger">
+    Chyba @statusCode
+</div>
+
+@if (statusCode == 403)
+{
+    <p>Nemáte oprávnění pro přístup k této části aplikace.</p>
+
+}
+else if (statusCode == 404)
+{
+    <p>Požadovaná stránka nebyla nalezena.</p>
+}
+else
+{
+    <p>Při zpracování požadavku nastala chyba - Status kód: @statusCode</p>
+}

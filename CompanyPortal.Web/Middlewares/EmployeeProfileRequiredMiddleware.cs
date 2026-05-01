@@ -8,7 +8,7 @@ public sealed class EmployeeProfileRequiredMiddleware(CompanyPortalDbContext con
 {
     public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
-        string? applicationUserId = httpContext.User.FindFirstValue("ApplicationUserId");
+        string? applicationUserId = httpContext.User.FindFirstValue("ApplicationUserId"); //ClaimTypes.NameIdentifier
 
         if (string.IsNullOrWhiteSpace(applicationUserId))
         {

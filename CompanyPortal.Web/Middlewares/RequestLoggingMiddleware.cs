@@ -20,17 +20,22 @@ public sealed class RequestLoggingMiddleware(RequestDelegate next)
         using (LogContext.PushProperty("Method", method))
         using (LogContext.PushProperty("QueryString", queryString))
         {
-            await next(context);
+            try
+            {
+                await next(context);
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
 
-            stopwatch.Stop();
+                Log.Error(ex,"Unhandled exception during request {Method} {Endpoint}. User: {User}. Query: {QueryString}",
+                    method,
+                    endpoint,
+                    userName,
+                    queryString);
 
-            Log.Information("Request {Method} {Endpoint} completed with status {StatusCode} in {ElapsedMilliseconds} ms. User: {User}. Query: {QueryString}",
-                method,
-                endpoint,
-                context.Response.StatusCode,
-                stopwatch.ElapsedMilliseconds,
-                userName,
-                queryString);
+                throw;
+            }
         }
     }
 }
