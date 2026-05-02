@@ -2,7 +2,7 @@
 
 namespace CompanyPortal.Domain.Entities;
 
-public sealed class Building : HasId
+public sealed class Building : IHasId, IHasActive
 {
     public int Id { get; set; }
     public string BuildingName { get; set; } = default!;

@@ -3,7 +3,7 @@ using CompanyPortal.Shared.Enums;
 
 namespace CompanyPortal.Domain.Entities;
 
-public sealed class Position : HasId
+public sealed class Position : IHasId, IHasActive
 {
     public int Id { get; set; }
     public string PositionName { get; set; } = default!;

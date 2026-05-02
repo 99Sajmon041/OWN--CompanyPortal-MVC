@@ -30,14 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Building\Controllers\" />
-    <Folder Include="Areas\Building\Views\" />
-    <Folder Include="Areas\Department\Controllers\" />
-    <Folder Include="Areas\Department\Views\" />
-    <Folder Include="Areas\Employee\Controllers\" />
-    <Folder Include="Areas\Employee\Views\" />
-    <Folder Include="Areas\Position\Controllers\" />
-    <Folder Include="Areas\Position\Views\" />
+    <Folder Include="Areas\Administration\Views\" />
+    <Folder Include="Areas\Administration\Views\Building\" />
+    <Folder Include="Areas\Administration\Views\Department\" />
+    <Folder Include="Areas\Administration\Views\Employee\" />
+    <Folder Include="Areas\Administration\Views\Position\" />
     <Folder Include="Models\" />
   </ItemGroup>
 

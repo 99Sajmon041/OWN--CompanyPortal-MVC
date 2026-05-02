@@ -2,7 +2,7 @@
 
 namespace CompanyPortal.Domain.Entities;
 
-public sealed class Department : HasId
+public sealed class Department : IHasId, IHasActive
 {
     public int Id { get; set; }
     public string DepartmentName { get; set; } = default!;

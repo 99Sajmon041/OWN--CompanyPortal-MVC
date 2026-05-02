@@ -3,12 +3,14 @@ using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using System.Reflection;
 
 namespace CompanyPortal.Application.Services.Implementations;
 
 public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IBuildingService
-{ 
-    public async Task ChangeStatusAsync(int id, CancellationToken ct)
+{
+    // List - dynamicsPager
+    public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
     {
         var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);
         if (building is null)
@@ -16,11 +18,14 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
             throw new Exception("Budova nebyla nalezena.");
         }
 
+        string term;
+
         if (building.IsActive)
         {
             if (building.Departments.Any(x => x.IsActive))
             {
                 building.IsActive = false;
+                term = "Deaktivace";
             }
             else
             {
@@ -30,9 +35,12 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         else
         {
             building.IsActive = true;
+            term = "Aktivace";
         }
 
         await unitOfWork.SaveChangesAsync(ct);
+
+        return term;
     }
 
     public async Task<BuildingDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
@@ -81,5 +89,18 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         mapper.Map(model, building);
 
         await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task<BuildingUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
+    {
+        var building = await unitOfWork.BuildingRepository.GetWithoutDependenciesAsync(id, ct);
+        if (building is null)
+        {
+            throw new Exception("Budova nebyla nalezena.");
+        }
+
+        var buildingVm = mapper.Map<BuildingUpsertViewModel>(building);
+
+        return buildingVm;
     }
 }

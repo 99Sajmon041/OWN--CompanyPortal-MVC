@@ -7,5 +7,4 @@ public sealed class BuildingListItemViewModel
     public string? Description { get; set; }
     public string Code { get; set; } = default!;
     public bool IsActive { get; set; }
-    public int DepartmentsCount { get; set; }
 }

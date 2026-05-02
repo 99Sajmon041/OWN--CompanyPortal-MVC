@@ -1,6 +1,6 @@
 ﻿namespace CompanyPortal.Domain.EntityInterface;
 
-public interface HasId
+public interface IHasId
 {
     int Id { get; }
 }
