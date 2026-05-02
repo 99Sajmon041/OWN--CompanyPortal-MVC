@@ -6,5 +6,6 @@ namespace CompanyPortal.Infrastructure.Repositories;
 
 public sealed class DepartmentRepository(CompanyPortalDbContext context) : BaseRepository<Department>(context), IDepartmentRepository
 {
+    private readonly CompanyPortalDbContext _context = context;
 
 }

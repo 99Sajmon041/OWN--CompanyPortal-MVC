@@ -1,6 +1,8 @@
-﻿namespace CompanyPortal.Domain.RepositoryInterfaces;
+﻿using CompanyPortal.Domain.Entities;
 
-public interface IDepartmentRepository
+namespace CompanyPortal.Domain.RepositoryInterfaces;
+
+public interface IDepartmentRepository : IBaseRepository<Department>
 {
 
 }

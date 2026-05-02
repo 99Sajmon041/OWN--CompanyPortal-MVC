@@ -1,6 +1,8 @@
-﻿namespace CompanyPortal.Domain.Entities;
+﻿using CompanyPortal.Domain.EntityInterface;
 
-public sealed class Employee
+namespace CompanyPortal.Domain.Entities;
+
+public sealed class Employee : HasId
 {
     public int Id { get; set; }
     public string PersonalNumber { get; set; } = default!;

@@ -1,9 +1,12 @@
-﻿namespace CompanyPortal.Domain.Entities;
+﻿using CompanyPortal.Domain.EntityInterface;
 
-public sealed class Department
+namespace CompanyPortal.Domain.Entities;
+
+public sealed class Department : HasId
 {
     public int Id { get; set; }
     public string DepartmentName { get; set; } = default!;
+    public bool IsActive { get; set; }
     public ICollection<Position> Positions { get; set; } = [];
     public Building Building { get; set; } = default!;
     public int BuildingId { get; set; }

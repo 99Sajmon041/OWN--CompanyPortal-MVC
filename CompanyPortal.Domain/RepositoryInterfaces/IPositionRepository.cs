@@ -1,6 +1,8 @@
-﻿namespace CompanyPortal.Domain.RepositoryInterfaces;
+﻿using CompanyPortal.Domain.Entities;
 
-public interface IPositionRepository
+namespace CompanyPortal.Domain.RepositoryInterfaces;
+
+public interface IPositionRepository : IBaseRepository<Position>
 {
 
 }

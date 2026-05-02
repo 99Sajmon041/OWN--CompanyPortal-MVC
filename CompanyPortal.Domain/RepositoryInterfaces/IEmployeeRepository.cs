@@ -2,7 +2,7 @@
 
 namespace CompanyPortal.Domain.RepositoryInterfaces;
 
-public interface IEmployeeRepository
+public interface IEmployeeRepository : IBaseRepository<Employee>
 {
     Task<Employee?> GetByIdAsync(int id, CancellationToken ct);
 }

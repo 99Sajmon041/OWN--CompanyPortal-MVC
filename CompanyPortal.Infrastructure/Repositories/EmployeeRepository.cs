@@ -7,14 +7,11 @@ namespace CompanyPortal.Infrastructure.Repositories;
 
 public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRepository<Employee>(context), IEmployeeRepository
 {
-    // Add hotovo
-    // List - přes dynamický pager (reší service, jen vrátim IQueryable z baseRepa)
-    // Update opět řeší service
-    // Change Status (deaktivate / activate) - opět řeší service
+    private readonly CompanyPortalDbContext _context = context;
 
     public async Task<Employee?> GetByIdAsync(int id, CancellationToken ct)
     {
-        return await context.Employees
+        return await _context.Employees
             .Include(x => x.Position)
             .ThenInclude(x => x.Department)
             .FirstOrDefaultAsync(x => x.Id == id, ct);

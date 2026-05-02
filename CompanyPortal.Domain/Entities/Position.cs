@@ -1,13 +1,15 @@
-﻿using CompanyPortal.Shared.Enums;
+﻿using CompanyPortal.Domain.EntityInterface;
+using CompanyPortal.Shared.Enums;
 
 namespace CompanyPortal.Domain.Entities;
 
-public sealed class Position
+public sealed class Position : HasId
 {
     public int Id { get; set; }
     public string PositionName { get; set; } = default!;
     public PositionLevel PositionLevel { get; set; }
     public Department Department { get; set; } = default!;
     public int DepartmentId { get; set; }
+    public bool IsActive { get; set; }
     public ICollection<Employee> Employees { get; set; } = [];
 }
