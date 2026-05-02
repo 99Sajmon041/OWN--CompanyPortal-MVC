@@ -22,6 +22,36 @@ namespace CompanyPortal.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Building", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BuildingName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Buildings");
+                });
+
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -30,12 +60,17 @@ namespace CompanyPortal.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BuildingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("DepartmentName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BuildingId");
 
                     b.HasIndex("DepartmentName")
                         .IsUnique();
@@ -103,6 +138,9 @@ namespace CompanyPortal.Infrastructure.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PositionLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("PositionName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -146,6 +184,9 @@ namespace CompanyPortal.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmployeeProfileCompleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -330,6 +371,17 @@ namespace CompanyPortal.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Department", b =>
+                {
+                    b.HasOne("CompanyPortal.Domain.Entities.Building", "Building")
+                        .WithMany("Departments")
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Building");
+                });
+
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("CompanyPortal.Infrastructure.AppUser.ApplicationUser", null)
@@ -407,6 +459,11 @@ namespace CompanyPortal.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Building", b =>
+                {
+                    b.Navigation("Departments");
                 });
 
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Department", b =>

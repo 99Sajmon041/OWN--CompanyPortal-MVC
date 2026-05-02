@@ -1,4 +1,8 @@
-﻿using CompanyPortal.Infrastructure.Database;
+﻿using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Infrastructure.AppUser;
+using CompanyPortal.Infrastructure.Database;
+using CompanyPortal.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +17,12 @@ public static class InfrastructureServicesRegistration
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
+
+        services.AddIdentityCore<ApplicationUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<CompanyPortalDbContext>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

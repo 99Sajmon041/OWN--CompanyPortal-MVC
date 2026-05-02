@@ -10,8 +10,4 @@
     <ProjectReference Include="..\CompanyPortal.Shared\CompanyPortal.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RepositoryInterfaces\" />
-  </ItemGroup>
-
 </Project>

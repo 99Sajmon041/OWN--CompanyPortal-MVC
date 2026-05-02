@@ -1,9 +1,12 @@
 using CompanyPortal.Application.Extentions;
+using CompanyPortal.Infrastructure.AppUser;
+using CompanyPortal.Infrastructure.Database;
 using CompanyPortal.Infrastructure.Extentions;
 using CompanyPortal.Web.Middlewares;
 using CompanyPortal.Web.Seed;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
