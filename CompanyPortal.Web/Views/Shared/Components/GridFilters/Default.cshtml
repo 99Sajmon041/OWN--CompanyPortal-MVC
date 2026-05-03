@@ -1,0 +1,143 @@
+﻿@model GridFiltersViewModel
+
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="bi bi-filter"></i>
+            Filtry
+        </div>
+
+        <a href="#"
+           aria-expanded="@(!Model.FiltersCollapsed).ToString().ToLower()"
+           aria-controls="gridFiltersCollapse"
+           class="text-decoration-none text-dark"
+           id="filterCollapseToggle">
+            <i class="bi bi-chevron-@(!Model.FiltersCollapsed ? "up" : "down")"></i>
+        </a>
+    </div>
+
+    <div class="collapse @(Model.FiltersCollapsed ? "" : "show")" id="gridFiltersCollapse">
+        <div class="card-body">
+            <form method="get" asp-action="@Model.Action" asp-controller="@Model.Controller" class="mb-4">
+                <div class="row g-3">
+                    @foreach (var field in Model.Fields)
+                    {
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">@field.Label</label>
+
+                            @if (field.UnderlyingType == typeof(DateTime))
+                            {
+                                <input readonly type="text" value="@field.SelectedOperator.GetDisplayName()" class="form-control filter-value" />
+                            }
+                            else
+                            {
+                                <select name="@(field.PropertyName + "_Operator")" class="form-select mb-2 filter-operator" data-filter-name="@field.PropertyName">
+                                    @foreach (var opt in field.AllowedOperators)
+                                    {
+                                        if (opt == field.SelectedOperator)
+                                        {
+                                            <option value="@opt" selected>@opt.GetDisplayName()</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@opt">@opt.GetDisplayName()</option>
+                                        }
+                                    }
+                                </select>
+                            }
+
+                            @switch (field.InputType)
+                            {
+                                case FilterInputType.Text:
+                                    <input type="text"
+                                           name="@field.PropertyName"
+                                           value="@field.Value"
+                                           class="form-control filter-value"
+                                           data-filter-name="@field.PropertyName" />
+                                    break;
+
+                                case FilterInputType.Number:
+                                    <input type="number"
+                                           name="@field.PropertyName"
+                                           value="@field.Value"
+                                           class="form-control filter-value"
+                                           data-filter-name="@field.PropertyName" />
+                                    break;
+
+                                case FilterInputType.Date:
+                                    <input type="date"
+                                           name="@field.PropertyName"
+                                           value="@field.Value"
+                                           class="form-control filter-value"
+                                           data-filter-name="@field.PropertyName" />
+                                    break;
+
+                                case FilterInputType.Select:
+                                    if (field.Options.Count > 0)
+                                    {
+                                        <select name="@field.PropertyName" class="form-select filter-value" data-filter-name="@field.PropertyName">
+                                            <option value="">--Vyberte--</option>
+
+                                            @foreach (var option in field.Options)
+                                            {
+                                                if (field.Value == option.Value)
+                                                {
+                                                    <option value="@option.Value" selected>@option.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@option.Value">@option.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    }
+                                    else if (field.UnderlyingType == typeof(bool))
+                                    {
+                                        <select name="@field.PropertyName" class="form-select filter-value" data-filter-name="@field.PropertyName">
+                                            <option value="">--Vyberte--</option>
+                                            <option value="true" selected="@(field.Value == "true")">Ano</option>
+                                            <option value="false" selected="@(field.Value == "false")">Ne</option>
+                                        </select>
+                                    }
+                                    else if (field.UnderlyingType.IsEnum)
+                                    {
+                                        <select name="@field.PropertyName" class="form-select filter-value" data-filter-name="@field.PropertyName">
+                                            <option value="">--Vyberte--</option>
+
+                                            @foreach (var enumValue in Enum.GetValues(field.UnderlyingType))
+                                            {
+                                                var enumItem = (Enum)enumValue;
+
+                                                if (field.Value == enumValue.ToString())
+                                                {
+                                                    <option value="@enumValue" selected>@enumItem.GetDisplayName()</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@enumValue">@enumItem.GetDisplayName()</option>
+                                                }
+                                            }
+                                        </select>
+                                    }
+                                    break;
+                            }
+                        </div>
+                    }
+                </div>
+
+                <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                <input type="hidden" name="filtersCollapsed" value="@Model.FiltersCollapsed.ToString().ToLower()" />
+
+                @if (!string.IsNullOrWhiteSpace(Model.SortOrder))
+                {
+                    <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+                }
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Filtrovat</button>
+                    <a asp-action="@Model.Action" asp-controller="@Model.Controller" class="btn btn-outline-secondary">Vymazat</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

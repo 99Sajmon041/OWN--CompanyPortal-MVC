@@ -2,7 +2,6 @@
 using CompanyPortal.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
