@@ -35,7 +35,6 @@
     <Folder Include="Areas\Administration\Views\Department\" />
     <Folder Include="Areas\Administration\Views\Employee\" />
     <Folder Include="Areas\Administration\Views\Position\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
