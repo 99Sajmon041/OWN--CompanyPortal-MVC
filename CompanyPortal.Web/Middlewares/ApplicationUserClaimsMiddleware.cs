@@ -37,9 +37,10 @@ public sealed class ApplicationUserClaimsMiddleware(
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 
-        ClaimsIdentity identity = new ClaimsIdentity();
+        ClaimsIdentity identity = new ClaimsIdentity("CompanyPortalApplication");
 
         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+        identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName ?? ""));
         identity.AddClaim(new Claim("ApplicationUserId", user.Id));
         identity.AddClaim(new Claim("DomainUserName", user.DomainUserName));
 
@@ -78,7 +79,13 @@ public sealed class ApplicationUserClaimsMiddleware(
             return null;
         }
 
-        string defaultRole = roleOptions.Value.First(x => x == "Employee");
+        string? defaultRole = roleOptions.Value.FirstOrDefault(x => x == "Employee");
+
+        if (defaultRole is null)
+        {
+            await transaction.RollbackAsync();
+            return null;
+        }
 
         IdentityResult roleResult = await userManager.AddToRoleAsync(user, defaultRole);
 

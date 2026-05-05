@@ -1,5 +1,7 @@
+using CompanyPortal.Application.CurrentIdentity;
 using CompanyPortal.Application.Extentions;
 using CompanyPortal.Infrastructure.Extentions;
+using CompanyPortal.Web.CurrentIdentity;
 using CompanyPortal.Web.Middlewares;
 using CompanyPortal.Web.Seed;
 using Microsoft.AspNetCore.Authentication.Negotiate;
@@ -40,6 +42,9 @@ builder.Services.AddScoped<DefaultSeeder>();
 builder.Services.AddScoped<ApplicationUserClaimsMiddleware>();
 builder.Services.AddScoped<EmployeeProfileRequiredMiddleware>();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 var app = builder.Build();
 
 app.UseExceptionHandler("/Error/Unexpected");
@@ -59,13 +64,13 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseStatusCodePagesWithReExecute("/Error/StatusCode", "?code={0}");
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseMiddleware<ApplicationUserClaimsMiddleware>();
 app.UseMiddleware<EmployeeProfileRequiredMiddleware>();
 app.UseAuthorization();
 
-app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapStaticAssets();
 

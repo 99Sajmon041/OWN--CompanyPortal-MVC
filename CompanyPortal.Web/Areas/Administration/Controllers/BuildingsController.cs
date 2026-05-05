@@ -1,19 +1,24 @@
 ﻿using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Services.Interfaces;
+using CompanyPortal.Shared.Grid.Common;
+using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin")]
+[Authorize(Roles = "MasterAdmin, HR, ManagingDirector, ExecutiveManager")]
 public class BuildingsController(IBuildingService buildingService) : Controller
 {
-    //TODO: List - dynamicsPager
     [HttpGet]
-    public IActionResult List()
+    public async Task<IActionResult> List(CancellationToken ct)
     {
-        return View();
+        GridRequest gridRequest = GridRequestBuilder.GetFromRequest(Request);
+
+        var result = await buildingService.GetAllPagedAsync(gridRequest, ct);
+
+        return View(result);
     }
 
 

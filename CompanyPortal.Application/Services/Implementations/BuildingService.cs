@@ -3,13 +3,46 @@ using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
-using System.Reflection;
+using CompanyPortal.Shared.Grid.Common;
+using Microsoft.EntityFrameworkCore;
+using CompanyPortal.Shared.Grid.Filtering;
+using CompanyPortal.Shared.Grid.Paging;
+using AutoMapper.QueryableExtensions;
 
 namespace CompanyPortal.Application.Services.Implementations;
 
 public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IBuildingService
 {
-    // List - dynamicsPager
+    public async Task<PagedResult<BuildingListItemViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct)
+    {
+        gridRequest.Normalize();
+
+        IQueryable<Building> query = unitOfWork.BuildingRepository.GetAllQueryable();
+
+        query = query.ApplyFilters(gridRequest.Filters);
+
+        int totalItems = await query.CountAsync(ct);
+
+        var pager = new Pager(totalItems, gridRequest.Page, gridRequest.PageSize);
+
+        query = query.ApplySorting(gridRequest.SortOrder);
+        query = query.ApplyPaging(pager);
+
+        var buildings = await query.ToListAsync(ct);
+
+        var items = await query
+            .ProjectTo<BuildingListItemViewModel>(mapper.ConfigurationProvider)
+            .ToListAsync(ct);
+
+        return new PagedResult<BuildingListItemViewModel>
+        {
+            Items = items,
+            Pager = pager,
+            GridRequest = gridRequest,
+            FilterModelType = typeof(Building)
+        };
+    }
+
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
     {
         var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);

@@ -1,10 +1,12 @@
 ﻿using CompanyPortal.Application.Models.Building;
+using CompanyPortal.Shared.Grid.Common;
+using CompanyPortal.Shared.Grid.Paging;
 
 namespace CompanyPortal.Application.Services.Interfaces;
 
 public interface IBuildingService
 {
-    // List - dynamicsPager
+    Task<PagedResult<BuildingListItemViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct);
     Task CreateAsync(BuildingUpsertViewModel model, CancellationToken ct);
     Task UpdateAsync(BuildingUpsertViewModel model, CancellationToken ct);
     Task<string> ChangeStatusAsync(int id, CancellationToken ct);

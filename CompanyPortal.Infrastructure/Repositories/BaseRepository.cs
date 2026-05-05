@@ -14,9 +14,9 @@ public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository
         await database.AddAsync(entity, ct);
     }
 
-    public IQueryable<T> GetAll()
+    public IQueryable<T> GetAllQueryable()
     {
-        return database.AsQueryable();
+        return database.AsNoTracking();
     }
 
     public async Task<T?> GetWithoutDependenciesAsync(int id, CancellationToken ct)
@@ -34,5 +34,33 @@ public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository
         return await database
             .Where(x => x.IsActive)
             .ToListAsync(ct);
+    }
+
+    public bool ExistsRecord<S>(Dictionary<string, string> properties) where S : class
+    {
+        var records = context.Set<S>().AsNoTracking().ToList();
+        var recordProperties = typeof(S).GetProperties();
+
+        foreach (var record in records)
+        {
+            foreach (var property in properties)
+            {
+                var propertyInfo = recordProperties.FirstOrDefault(x => x.Name == property.Key);
+
+                if (propertyInfo is null)
+                {
+                    continue;
+                }
+
+                string? recordValue = propertyInfo.GetValue(record)?.ToString();
+
+                if (recordValue == property.Value)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
