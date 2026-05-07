@@ -1,4 +1,5 @@
-﻿using CompanyPortal.Application.Services.Interfaces;
+﻿using CompanyPortal.Application.Models.Department;
+using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,109 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeStatus(int id, CancellationToken ct)
+    {
+        try
+        {
+            string term = await departmentService.ChangeStatusAsync(id, ct);
+            TempData["Success"] = $"{term} proběhla úspěšně.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+
+        return RedirectToAction(nameof(List));
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Create(CancellationToken ct)
+    {
+        var result = await departmentService.GetForCreateAsync(ct);
+        return View(result);
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(DepartmentUpsertViewModel model, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            var result = await departmentService.GetForCreateAsync(ct);
+            model.Buildings = result.Buildings;
+
+            return View(model);
+        }
+
+        try
+        {
+            await departmentService.CreateAsync(model, ct);
+            TempData["Success"] = "Oddělení bylo úspěšně vytvořeno.";
+
+            return RedirectToAction(nameof(List));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+
+            var result = await departmentService.GetForCreateAsync(ct);
+            model.Buildings = result.Buildings;
+
+            return View(model);
+        }
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Update(int id, CancellationToken ct)
+    {
+        try
+        {
+            var result = await departmentService.GetForUpdateAsync(id, ct);
+            return View(result);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
+
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(int id, DepartmentUpsertViewModel model, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            var result = await departmentService.GetForUpdateAsync(model.Id, ct);
+            model.Buildings = result.Buildings;
+
+            return View(model);
+        }
+
+        try
+        {
+            await departmentService.UpdateAsync(id, model, ct);
+            TempData["Success"] = "Oddělení bylo úspěšně aktualizováno.";
+
+            return RedirectToAction(nameof(List));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+
+            var result = await departmentService.GetForUpdateAsync(model.Id, ct);
+            model.Buildings = result.Buildings;
+
+            return View(model);
         }
     }
 }

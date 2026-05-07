@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
@@ -8,6 +7,7 @@ using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Application.Services.Implementations;
@@ -53,5 +53,122 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         var deparmentVm = mapper.Map<DepartmentDetailViewModel>(deparment);
 
         return deparmentVm;
+    }
+
+    public async Task CreateAsync(DepartmentUpsertViewModel model, CancellationToken ct)
+    {
+        var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, ct);
+        if (existsSameName)
+        {
+            throw new Exception("Oddělení se stejným názvem již existuje.");
+        }
+
+        var department = mapper.Map<Department>(model);
+        department.IsActive = true;
+
+        await unitOfWork.DepartmentRepository.AddAsync(department, ct);
+
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task<DepartmentUpsertViewModel> GetForCreateAsync(CancellationToken ct)
+    {
+        var buildings = await GetBuildingSelectListItemsAsync(ct);
+
+        return new DepartmentUpsertViewModel
+        {
+            Buildings = buildings
+        };
+    }
+    public async Task<DepartmentUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
+    {
+        var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
+        if (department is null)
+        {
+            throw new Exception("Oddělení nebylo nalezeno.");
+        }
+
+        var buildings = await GetBuildingSelectListItemsAsync(ct);
+        foreach (var building in buildings)
+        {
+            if (building.Value == department.BuildingId.ToString())
+            {
+                building.Selected = true;
+                break;
+            }
+        }
+
+        var departmentVm = mapper.Map<DepartmentUpsertViewModel>(department);
+        departmentVm.Buildings = buildings;
+
+        return departmentVm;
+    }
+
+    public async Task UpdateAsync(int id, DepartmentUpsertViewModel model, CancellationToken ct)
+    {
+        if (id != model.Id)
+        {
+            throw new Exception("Neplatný identifikátor oddělení.");
+        }
+
+        var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
+        if (department is null)
+        {
+            throw new Exception("Oddělení nebylo nalezeno.");
+        }
+
+        var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, department.Id, ct);
+        if (existsSameName)
+        {             
+            throw new Exception("Oddělení se stejným názvem již existuje.");
+        }
+
+        mapper.Map(model, department);
+
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
+    {
+        var department = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
+        if (department is null)
+        {
+            throw new Exception("Oddělení nebylo nalezeno.");
+        }
+
+        string term;
+
+        if (department.IsActive)
+        {
+            if (!department.Positions.Any(x => x.IsActive))
+            {
+                department.IsActive = false;
+                term = "Deaktivace";
+            }
+            else
+            {
+                throw new Exception("Oddělení nelze deaktivovat, má stále aktivní pozice.");
+            }
+        }
+        else
+        {
+            department.IsActive = true;
+            term = "Aktivace";
+        }
+
+        await unitOfWork.SaveChangesAsync(ct);
+
+        return term;
+    }
+
+    private async Task<List<SelectListItem>> GetBuildingSelectListItemsAsync(CancellationToken ct)
+    {
+        var buildings = await unitOfWork.BuildingRepository.GetAllActiveAsync(ct);
+        return buildings.Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = x.BuildingName
+        })
+        .ToList();
     }
 }

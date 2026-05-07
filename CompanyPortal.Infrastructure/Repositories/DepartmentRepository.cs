@@ -22,4 +22,14 @@ public sealed class DepartmentRepository(CompanyPortalDbContext context) : BaseR
             .Include(x => x.Positions)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
     }
+
+    public async Task<bool> ExistsAnyWithSameParametersAsync(string departmentName, int id, CancellationToken ct)
+    {
+        return await _context.Departments.AnyAsync(x => x.Id != id && x.DepartmentName == departmentName, ct);
+    }
+
+    public async Task<bool> ExistsAnyWithSameParametersAsync(string departmentName, CancellationToken ct)
+    {
+        return await _context.Departments.AnyAsync(x => x.DepartmentName == departmentName, ct);
+    }
 }

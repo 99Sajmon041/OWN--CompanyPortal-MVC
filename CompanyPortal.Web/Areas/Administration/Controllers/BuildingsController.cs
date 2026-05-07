@@ -106,7 +106,7 @@ public class BuildingsController(IBuildingService buildingService) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Update(BuildingUpsertViewModel model, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, BuildingUpsertViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)
         {
@@ -115,7 +115,7 @@ public class BuildingsController(IBuildingService buildingService) : Controller
 
         try
         {
-            await buildingService.UpdateAsync(model, ct);
+            await buildingService.UpdateAsync(id, model, ct);
             TempData["Success"] = "Úprava budovy proběhla úspěšně.";
 
             return RedirectToAction(nameof(List));

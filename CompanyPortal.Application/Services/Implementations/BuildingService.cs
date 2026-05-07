@@ -55,7 +55,7 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
 
         if (building.IsActive)
         {
-            if (building.Departments.Any(x => x.IsActive))
+            if (!building.Departments.Any(x => x.IsActive))
             {
                 building.IsActive = false;
                 term = "Deaktivace";
@@ -105,8 +105,13 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         await unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task UpdateAsync(BuildingUpsertViewModel model, CancellationToken ct)
+    public async Task UpdateAsync(int id, BuildingUpsertViewModel model, CancellationToken ct)
     {
+        if (id != model.Id)
+        {
+            throw new Exception("Neplatný identifikátor budovy.");
+        }
+
         var building = await unitOfWork.BuildingRepository.GetWithoutDependenciesAsync(model.Id, ct);
         if (building is null)
         {

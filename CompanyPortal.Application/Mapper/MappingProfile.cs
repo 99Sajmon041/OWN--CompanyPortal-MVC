@@ -21,5 +21,9 @@ public sealed class MappingProfile : Profile
 
         CreateMap<Department, DepartmentListItemViewModel>()
             .ForMember(x => x.BuildingName, opt => opt.MapFrom(x => x.Building.BuildingName));
+
+        CreateMap<DepartmentUpsertViewModel, Department>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.IsActive, opt => opt.Ignore());
     }
 }
