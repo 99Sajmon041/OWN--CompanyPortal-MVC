@@ -8,4 +8,5 @@ public sealed class PositionListItemViewModel
     public string PositionName { get; set; } = default!;
     public PositionLevel PositionLevel { get; set; }
     public bool IsActive { get; set; }
+    public string DepartmentName { get; set; } = default!;
 }

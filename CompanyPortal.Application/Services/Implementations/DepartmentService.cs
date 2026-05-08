@@ -55,6 +55,50 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         return deparmentVm;
     }
 
+    public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
+    {
+        var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
+        if (department is null)
+        {
+            throw new Exception("Oddělení nebylo nalezeno.");
+        }
+
+        string term;
+
+        if (department.IsActive)
+        {
+            if (!department.Positions.Any(x => x.IsActive))
+            {
+                department.IsActive = false;
+                term = "Deaktivace";
+            }
+            else
+            {
+                throw new Exception("Oddělení nelze deaktivovat, má stále aktivní pozice.");
+            }
+        }
+        else
+        {
+            department.IsActive = true;
+            term = "Aktivace";
+        }
+
+        await unitOfWork.SaveChangesAsync(ct);
+
+        return term;
+    }
+
+
+    public async Task<DepartmentUpsertViewModel> GetForCreateAsync(CancellationToken ct)
+    {
+        var buildings = await GetBuildingSelectListItemsAsync(ct);
+
+        return new DepartmentUpsertViewModel
+        {
+            Buildings = buildings
+        };
+    }
+
     public async Task CreateAsync(DepartmentUpsertViewModel model, CancellationToken ct)
     {
         var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, ct);
@@ -67,19 +111,9 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         department.IsActive = true;
 
         await unitOfWork.DepartmentRepository.AddAsync(department, ct);
-
         await unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task<DepartmentUpsertViewModel> GetForCreateAsync(CancellationToken ct)
-    {
-        var buildings = await GetBuildingSelectListItemsAsync(ct);
-
-        return new DepartmentUpsertViewModel
-        {
-            Buildings = buildings
-        };
-    }
     public async Task<DepartmentUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
         var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
@@ -128,42 +162,10 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         await unitOfWork.SaveChangesAsync(ct);
     }
 
-    public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
-    {
-        var department = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
-        if (department is null)
-        {
-            throw new Exception("Oddělení nebylo nalezeno.");
-        }
-
-        string term;
-
-        if (department.IsActive)
-        {
-            if (!department.Positions.Any(x => x.IsActive))
-            {
-                department.IsActive = false;
-                term = "Deaktivace";
-            }
-            else
-            {
-                throw new Exception("Oddělení nelze deaktivovat, má stále aktivní pozice.");
-            }
-        }
-        else
-        {
-            department.IsActive = true;
-            term = "Aktivace";
-        }
-
-        await unitOfWork.SaveChangesAsync(ct);
-
-        return term;
-    }
-
     private async Task<List<SelectListItem>> GetBuildingSelectListItemsAsync(CancellationToken ct)
     {
         var buildings = await unitOfWork.BuildingRepository.GetAllActiveAsync(ct);
+
         return buildings.Select(x => new SelectListItem
         {
             Value = x.Id.ToString(),

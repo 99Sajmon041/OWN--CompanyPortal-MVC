@@ -36,6 +36,8 @@ public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository
             .ToListAsync(ct);
     }
 
+
+    //Testing purposes only, not to be used in production code
     public bool ExistsRecord<S>(Dictionary<string, string> properties) where S : class
     {
         var records = context.Set<S>().AsNoTracking().ToList();
