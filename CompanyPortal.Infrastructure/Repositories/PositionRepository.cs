@@ -45,4 +45,11 @@ public sealed class PositionRepository(CompanyPortalDbContext context) : BaseRep
                 || x.PositionLevel == PositionLevel.Board),
                 ct);
     }
+
+    public async Task<List<Position>> GetAllAsyncWithPositions(CancellationToken ct)
+    {
+        return await _context.Positions
+            .Include(x => x.Department)
+            .ToListAsync(ct);
+    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CompanyPortal.Application.Models.Employee;
 
-public sealed class EmployeeListItemViewModel
+public sealed class EmployeeViewModel
 {
     public int Id { get; set; }
     public string PersonalNumber { get; set; } = default!;

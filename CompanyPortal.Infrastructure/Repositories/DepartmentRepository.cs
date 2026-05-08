@@ -1,7 +1,6 @@
 ﻿using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Infrastructure.Database;
-using CompanyPortal.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Infrastructure.Repositories;
