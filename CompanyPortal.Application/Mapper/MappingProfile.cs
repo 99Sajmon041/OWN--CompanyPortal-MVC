@@ -43,14 +43,33 @@ public sealed class MappingProfile : Profile
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
 
-        CreateMap<Employee, EmployeeViewModel>();
-
-        CreateMap<Employee, EmployeeUpsertViewModel>();
-
-        CreateMap<EmployeeUpsertViewModel, Employee>()
+        CreateMap<EmployeeCreateViewModel, Employee>()
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.CreatedAt, opt => opt.Ignore())
             .ForMember(x => x.PersonalNumber, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
+
+        CreateMap<Employee, EmployeeUpdateViewModel>();
+
+        CreateMap<EmployeeUpdateViewModel, Employee>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.CreatedAt, opt => opt.Ignore())
+            .ForMember(x => x.PersonalNumber, opt => opt.Ignore())
+            .ForMember(x => x.IsActive, opt => opt.Ignore())
+            .ForMember(x => x.ApplicationUserId, opt => opt.Ignore())
+            .ForMember(x => x.PositionId, opt => opt.Ignore());
+
+        CreateMap<Employee, EmployeePositionUpdateViewModel>()
+            .ForMember(x => x.EmployeeId, opt => opt.MapFrom(x => x.Id))
+            .ForMember(x => x.Positions, opt => opt.Ignore());
+
+        CreateMap<EmployeePositionUpdateViewModel, Employee>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.PersonalNumber, opt => opt.Ignore())
+            .ForMember(x => x.FirstName, opt => opt.Ignore())
+            .ForMember(x => x.LastName, opt => opt.Ignore())
+            .ForMember(x => x.ApplicationUserId, opt => opt.Ignore())
+            .ForMember(x => x.IsActive, opt => opt.Ignore())
+            .ForMember(x => x.CreatedAt, opt => opt.Ignore());
     }
 }

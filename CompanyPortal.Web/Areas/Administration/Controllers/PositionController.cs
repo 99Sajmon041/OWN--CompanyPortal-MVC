@@ -11,6 +11,7 @@ namespace CompanyPortal.Web.Areas.Administration.Controllers;
 [Authorize(Roles = "MasterAdmin, HR, ManagingDirector, ExecutiveManager")]
 public sealed class PositionController(IPositionService positionService) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> List(CancellationToken ct)
     {
         GridRequest gridRequest = GridRequestBuilder.GetFromRequest(Request);
@@ -105,7 +106,6 @@ public sealed class PositionController(IPositionService positionService) : Contr
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
-
     }
 
     [HttpPost]

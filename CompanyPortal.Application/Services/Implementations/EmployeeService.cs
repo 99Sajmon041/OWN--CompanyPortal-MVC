@@ -42,7 +42,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         };
     }
 
-    public async Task<EmployeeViewModel?> GetByIdAsync(int id, CancellationToken ct)
+    public async Task<EmployeeViewModel?> GetDetailAsync(int id, CancellationToken ct)
     {
         var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
@@ -81,20 +81,20 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         return term;
     }
 
-    public async Task<EmployeeUpsertViewModel> GetForCreate(CancellationToken ct)
+    public async Task<EmployeeCreateViewModel> GetForCreate(CancellationToken ct)
     {
         var positions = await GetPositionsSelectListAsync(ct);
         var applicationUsers = await applicationUserService.GetUsersForSelectListAsync(ct);
 
-        return new EmployeeUpsertViewModel
+        return new EmployeeCreateViewModel
         {
             Positions = positions,
             ApplicationUsers = applicationUsers
         };
     }
 
-    // - try catch add to Controller !!
-    public async Task CreateAsync(EmployeeUpsertViewModel model, CancellationToken ct)
+    // udělat ROOLBACK !!
+    public async Task CreateAsync(EmployeeCreateViewModel model, CancellationToken ct)
     {
         var employee = mapper.Map<Employee>(model);
 
@@ -114,8 +114,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         await applicationUserService.MarkEmployeeProfileCompletedAsync(employee.ApplicationUserId, ct);
     }
 
-    //Change FirstName and LastName allowed only, other properties will be disabled in the form
-    public async Task<EmployeeUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
+    public async Task<EmployeeUpdateViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
@@ -123,12 +122,12 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             throw new Exception("Zaměstnanec nebyl nalezen.");
         }
 
-        var employeeVm = mapper.Map<EmployeeUpsertViewModel>(employee);
+        var employeeVm = mapper.Map<EmployeeUpdateViewModel>(employee);
 
         return employeeVm;
     }
 
-    public async Task UpdateAsync(int id, EmployeeUpsertViewModel model, CancellationToken ct)
+    public async Task UpdateAsync(int id, EmployeeUpdateViewModel model, CancellationToken ct)
     {
         if (id != model.Id)
         {
@@ -157,5 +156,52 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             Text = $" {x.Department.DepartmentName}: {x.PositionName}"
         })
         .ToList();
+    }
+
+    public async Task<EmployeePositionUpdateViewModel> GetForPositionUpdateAsync(int id, CancellationToken ct)
+    {
+        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        if (employee is null)
+        {
+            throw new Exception("Zaměstnanec nebyl nalezen.");
+        }
+
+        var employeeVm = mapper.Map<EmployeePositionUpdateViewModel>(employee);
+        employeeVm.Positions = await GetPositionsSelectListAsync(ct);
+
+        foreach (var position in employeeVm.Positions)
+        {
+            if (position.Value == employeeVm.PositionId.ToString())
+            {
+                position.Selected = true;
+                break;
+            }
+        }
+
+        return employeeVm;
+    }
+
+    public async Task UpdatePositionAsync(int id, EmployeePositionUpdateViewModel model, CancellationToken ct)
+    {
+        if (id != model.EmployeeId)
+        {
+            throw new Exception("Neplatný identifikátor zaměstnance.");
+        }
+
+        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        if (employee is null)
+        {
+            throw new Exception("Zaměstnanec nebyl nalezen.");
+        }
+
+        var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(model.PositionId, ct);
+        if (position is null || !position.IsActive)
+        {
+            throw new Exception("Nově zvolená pozice nebyla nalezena nebo již není aktivní.");
+        }
+
+        mapper.Map(model, employee);
+
+        await unitOfWork.SaveChangesAsync(ct);
     }
 }

@@ -7,9 +7,9 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 {
     private ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
 
-    public string UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+    public string UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
 
-    public string DomainUserName => User?.FindFirstValue("DomainUserName") ?? "";
+    public string DomainUserName => User?.FindFirstValue("DomainUserName") ?? string.Empty;
 
     public IReadOnlyCollection<string> Roles =>
         User?.Claims
