@@ -9,6 +9,7 @@ public sealed class EmployeeUpsertViewModel
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
     public string ApplicationUserId { get; set; } = default!;
+    public List<SelectListItem> ApplicationUsers { get; set; } = [];
     public int PositionId { get; set; }
     public List<SelectListItem> Positions { get; set; } = [];
     public bool IsActive { get; set; } = true;

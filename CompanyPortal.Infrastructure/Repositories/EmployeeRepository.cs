@@ -22,13 +22,4 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
             .AsNoTracking()
             .Include(x => x.Position);
     }
-
-    public async Task<(bool, int)> ExistsWithSameNameAsync(string firstName, string lastName, CancellationToken ct)
-    {
-        var exists = await _context.Employees
-            .Where(x => x.FirstName == firstName && x.LastName == lastName)
-            .ToListAsync(ct);
-
-        return (exists.Count != 0, exists.Count);
-    }
 }

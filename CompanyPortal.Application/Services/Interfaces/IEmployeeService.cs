@@ -11,4 +11,6 @@ public interface IEmployeeService
     Task<string> ChangeStatusAsync(int id, CancellationToken ct);
     Task<EmployeeUpsertViewModel> GetForCreate(CancellationToken ct);
     Task CreateAsync(EmployeeUpsertViewModel model, CancellationToken ct);
+    Task<EmployeeUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct);
+    Task UpdateAsync(int id, EmployeeUpsertViewModel model, CancellationToken ct);
 }

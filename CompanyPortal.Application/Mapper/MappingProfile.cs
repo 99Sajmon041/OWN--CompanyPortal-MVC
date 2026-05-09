@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Models.Department;
+using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Domain.Entities;
 
@@ -40,6 +41,16 @@ public sealed class MappingProfile : Profile
 
         CreateMap<PositionUpsertViewModel, Position>()
             .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.IsActive, opt => opt.Ignore());
+
+        CreateMap<Employee, EmployeeViewModel>();
+
+        CreateMap<Employee, EmployeeUpsertViewModel>();
+
+        CreateMap<EmployeeUpsertViewModel, Employee>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.CreatedAt, opt => opt.Ignore())
+            .ForMember(x => x.PersonalNumber, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
     }
 }

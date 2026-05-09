@@ -1,4 +1,5 @@
-﻿using CompanyPortal.Domain.RepositoryInterfaces;
+﻿using CompanyPortal.Application.Services.Interfaces;
+using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
 using CompanyPortal.Infrastructure.Repositories;
@@ -23,6 +24,7 @@ public static class InfrastructureServicesRegistration
             .AddEntityFrameworkStores<CompanyPortalDbContext>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
         return services;
     }
