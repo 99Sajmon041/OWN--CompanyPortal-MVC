@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
+using CompanyPortal.Shared.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,8 +10,7 @@ namespace CompanyPortal.Web.Middlewares;
 
 public sealed class ApplicationUserClaimsMiddleware(
     UserManager<ApplicationUser> userManager,
-    CompanyPortalDbContext context,
-    IOptions<List<string>> roleOptions) : IMiddleware
+    CompanyPortalDbContext context) : IMiddleware
 {
     public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
@@ -79,7 +79,7 @@ public sealed class ApplicationUserClaimsMiddleware(
             return null;
         }
 
-        string? defaultRole = roleOptions.Value.FirstOrDefault(x => x == "Employee");
+        string? defaultRole = AppRoles.Employee;
 
         if (defaultRole is null)
         {
