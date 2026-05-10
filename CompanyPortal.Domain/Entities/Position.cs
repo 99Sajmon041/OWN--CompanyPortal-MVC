@@ -26,6 +26,10 @@ public sealed class Position : IHasId, IHasActive
     [FilterOrder(3)]
     [FilterLabel("Stav pozice")]
     public bool IsActive { get; set; }
+    
+    [FilterOrder(4)]
+    [FilterLabel("Hodinová sazba")]
+    public decimal HourlyRate { get; set; }
 
     [NotFilterable]
     public ICollection<Employee> Employees { get; set; } = [];

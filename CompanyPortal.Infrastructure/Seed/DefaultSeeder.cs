@@ -78,6 +78,7 @@ public sealed class DefaultSeeder(
         {
             PositionName = positionsOptions.Value.PositionName,
             Department = department,
+            HourlyRate = positionsOptions.Value.HourlyRate,
             PositionLevel = PositionLevel.GroupLeader
         };
 

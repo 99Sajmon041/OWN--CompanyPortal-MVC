@@ -19,6 +19,10 @@ public sealed class ApplicationUser : IdentityUser
     public DateTime CreatedAt { get; set; }
 
     [FilterOrder(4)]
-    [FilterLabel("Uživatel dokončen")]
+    [FilterLabel("Zaměstnanec. profil dokončen")]
     public bool IsEmployeeProfileCompleted { get; set; }
+
+    [FilterOrder(5)]
+    [FilterLabel("Platnost pracovního poměru")]
+    public DateTime? AccessValidUntil { get; set; }
 }

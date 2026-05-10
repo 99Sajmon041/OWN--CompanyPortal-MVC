@@ -3,4 +3,5 @@
 public sealed class SeedPosition
 {
     public string PositionName { get; set; } = default!;
+    public decimal HourlyRate { get; set; }
 }

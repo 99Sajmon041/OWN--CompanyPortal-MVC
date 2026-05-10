@@ -11,5 +11,6 @@ public sealed class PositionDetailViewModel
     public int DepartmentId { get; set; }
     public string DepartmentName { get; set; } = default!;
     public bool IsActive { get; set; }
+    public decimal HourlyRate { get; set; }
     public ICollection<EmployeeViewModel> Employees { get; set; } = [];
 }

@@ -22,6 +22,9 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
                 .IsRequired()
                 .HasMaxLength(50);
 
+            entity.Property(x => x.HourlyRate)
+                .HasColumnType("decimal(18,2)");
+
             entity.HasMany(x => x.Employees)
                 .WithOne(x => x.Position)
                 .HasForeignKey(x => x.PositionId)

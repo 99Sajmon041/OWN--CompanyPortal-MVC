@@ -22,4 +22,11 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
             .AsNoTracking()
             .Include(x => x.Position);
     }
+
+    public async Task<Employee?> GetByApplicationUserIdAsync(string applicationUserId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ApplicationUserId == applicationUserId, ct);
+    }
 }

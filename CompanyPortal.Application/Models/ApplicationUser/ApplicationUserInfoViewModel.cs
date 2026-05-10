@@ -9,4 +9,5 @@ public sealed class ApplicationUserViewModel
     public bool IsEmployeeProfileCompleted { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? AccessValidUntil { get; set; }
 }

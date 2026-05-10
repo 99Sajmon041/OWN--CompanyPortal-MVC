@@ -11,7 +11,6 @@ using CompanyPortal.Shared.Grid.Paging;
 using CompanyPortal.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace CompanyPortal.Application.Services.Implementations;
 
