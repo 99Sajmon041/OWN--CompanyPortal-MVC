@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.ApplicationUser;
 using CompanyPortal.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Infrastructure.AppUser;
 
-public sealed class ApplicationUserService(UserManager<ApplicationUser> userManager, IMapper mapper) : IApplicationUserService
+public sealed class ApplicationUserService(UserManager<ApplicationUser> userManager) : IApplicationUserService
 {
     public async Task<ApplicationUserViewModel> GetInfoAsync(string applicationUserId, CancellationToken ct)
     {
         var user = await userManager.FindByIdAsync(applicationUserId);
         if (user == null)
         {
-            throw new Exception("Uživatel nebyl nalezen.");
+            throw new EntityNotFoundException("Uživatel nebyl nalezen.");
         }
 
         var userVm = new ApplicationUserViewModel
@@ -48,7 +48,7 @@ public sealed class ApplicationUserService(UserManager<ApplicationUser> userMana
         var user = await userManager.FindByIdAsync(applicationUserId);
         if (user == null)
         {
-            throw new Exception("Uživatel nebyl nalezen.");
+            throw new EntityNotFoundException("Uživatel nebyl nalezen.");
         }
 
         user.IsEmployeeProfileCompleted = true;

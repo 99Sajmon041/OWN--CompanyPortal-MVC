@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
@@ -49,7 +50,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
         var position = await unitOfWork.PositionRepository.GetByIdAsync(id, ct);
         if (position is null)
         {
-            throw new Exception("Pozice nebyla nalezena.");
+            throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
         var positionVm = mapper.Map<PositionDetailViewModel>(position);
@@ -62,7 +63,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
         var position = await unitOfWork.PositionRepository.GetByIdAsync(id, ct);
         if (position is null)
         {
-            throw new Exception("Pozice nebyla nalezena.");
+            throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
         string term;
@@ -126,7 +127,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
         var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(id, ct);
         if (position is null)
         {
-            throw new Exception("Pozice nebyla nalezena.");
+            throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
         var deparments = await GetDepartmentSelectListItemsAsync(ct);
@@ -149,13 +150,13 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
     {
         if (id != model.Id)
         {
-            throw new Exception("Neplatný identifikátor pozice.");
+            throw new EntityNotFoundException("Neplatný identifikátor pozice.");
         }
 
         var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(id, ct);
         if (position is null)
         {
-            throw new Exception("Pozice nebyla nalezena.");
+            throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
         bool existsWithSameParameters = await unitOfWork.PositionRepository.ExistsAnyWithSameParametersAsync(model.PositionName, model.Id, ct);

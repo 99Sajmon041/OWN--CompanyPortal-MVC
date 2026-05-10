@@ -1,4 +1,5 @@
-﻿using CompanyPortal.Application.Models.Building;
+﻿using CompanyPortal.Application.Exceptions;
+using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
@@ -30,7 +31,7 @@ public class BuildingsController(IBuildingService buildingService) : Controller
             var result = await buildingService.GetDetailAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -46,14 +47,17 @@ public class BuildingsController(IBuildingService buildingService) : Controller
         {
             var result =  await buildingService.ChangeStatusAsync(id, ct);
             TempData["Success"] = $"{result} proběhla úspešně.";
-
-            return RedirectToAction(nameof(List));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
         }
         catch (Exception ex)
         {
             TempData["Error"] = ex.Message;
-            return RedirectToAction(nameof(List));
         }
+
+        return RedirectToAction(nameof(List));
     }
 
 
@@ -96,7 +100,7 @@ public class BuildingsController(IBuildingService buildingService) : Controller
             var result = await buildingService.GetForUpdateAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -118,6 +122,11 @@ public class BuildingsController(IBuildingService buildingService) : Controller
             await buildingService.UpdateAsync(id, model, ct);
             TempData["Success"] = "Úprava budovy proběhla úspěšně.";
 
+            return RedirectToAction(nameof(List));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
         catch (Exception ex)

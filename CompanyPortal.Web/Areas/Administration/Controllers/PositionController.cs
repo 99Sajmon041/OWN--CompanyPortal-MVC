@@ -1,4 +1,5 @@
-﻿using CompanyPortal.Application.Models.Position;
+﻿using CompanyPortal.Application.Exceptions;
+using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
@@ -29,7 +30,7 @@ public sealed class PositionController(IPositionService positionService) : Contr
             var result = await positionService.GetDetailAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -44,6 +45,10 @@ public sealed class PositionController(IPositionService positionService) : Contr
         {
             string term = await positionService.ChangeStatusAsync(id, ct);
             TempData["Success"] = $"{term} proběhla úspěšně.";
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
         }
         catch (Exception ex)
         {
@@ -101,7 +106,7 @@ public sealed class PositionController(IPositionService positionService) : Contr
             var result = await positionService.GetForUpdateAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -125,6 +130,11 @@ public sealed class PositionController(IPositionService positionService) : Contr
             await positionService.UpdateAsync(id, model, ct);
             TempData["Success"] = "Pozice byla úspěšně upravena.";
 
+            return RedirectToAction(nameof(List));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
         catch (Exception ex)

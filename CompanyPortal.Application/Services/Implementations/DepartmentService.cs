@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
@@ -47,7 +48,7 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         var deparment = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
         if (deparment is null)
         {
-            throw new Exception("Oddělení nebylo nalezeno.");
+            throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
         var deparmentVm = mapper.Map<DepartmentDetailViewModel>(deparment);
@@ -60,7 +61,7 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
         if (department is null)
         {
-            throw new Exception("Oddělení nebylo nalezeno.");
+            throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
         string term;
@@ -119,7 +120,7 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
         if (department is null)
         {
-            throw new Exception("Oddělení nebylo nalezeno.");
+            throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
         var buildings = await GetBuildingSelectListItemsAsync(ct);
@@ -142,13 +143,13 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
     {
         if (id != model.Id)
         {
-            throw new Exception("Neplatný identifikátor oddělení.");
+            throw new EntityNotFoundException("Neplatný identifikátor oddělení.");
         }
 
         var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
         if (department is null)
         {
-            throw new Exception("Oddělení nebylo nalezeno.");
+            throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
         var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, department.Id, ct);

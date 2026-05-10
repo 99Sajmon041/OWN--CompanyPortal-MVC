@@ -1,4 +1,5 @@
-﻿using CompanyPortal.Application.Models.Department;
+﻿using CompanyPortal.Application.Exceptions;
+using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
@@ -28,7 +29,7 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
             var result = await departmentService.GetDetailAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -43,6 +44,10 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
         {
             string term = await departmentService.ChangeStatusAsync(id, ct);
             TempData["Success"] = $"{term} proběhla úspěšně.";
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
         }
         catch (Exception ex)
         {
@@ -100,7 +105,7 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
             var result = await departmentService.GetForUpdateAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -125,6 +130,11 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
             await departmentService.UpdateAsync(id, model, ct);
             TempData["Success"] = "Oddělení bylo úspěšně aktualizováno.";
 
+            return RedirectToAction(nameof(List));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
         catch (Exception ex)

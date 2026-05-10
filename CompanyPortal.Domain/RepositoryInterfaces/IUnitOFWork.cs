@@ -7,4 +7,5 @@ public interface IUnitOfWork
     IPositionRepository PositionRepository { get; }
     IDepartmentRepository DepartmentRepository { get; }
     Task SaveChangesAsync(CancellationToken ct);
+    Task<IAppTransaction> BeginTransactionAsync(CancellationToken ct);
 }

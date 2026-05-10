@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Shared.Grid.Common;
-using Microsoft.EntityFrameworkCore;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
-using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Application.Services.Implementations;
 
@@ -43,12 +44,25 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         };
     }
 
+        public async Task<BuildingDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
+    {
+        var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);
+        if (building is null)
+        {
+            throw new EntityNotFoundException("Budova nebyla nalezena.");
+        }
+
+        var buildingVm = mapper.Map<BuildingDetailViewModel>(building);
+
+        return buildingVm;
+    }
+
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
     {
         var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);
         if (building is null)
         {
-            throw new Exception("Budova nebyla nalezena.");
+            throw new EntityNotFoundException("Budova nebyla nalezena.");
         }
 
         string term;
@@ -76,19 +90,6 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         return term;
     }
 
-    public async Task<BuildingDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
-    {
-        var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);
-        if (building is null)
-        {
-            throw new Exception("Budova nebyla nalezena.");
-        }
-
-        var buildingVm = mapper.Map<BuildingDetailViewModel>(building);
-
-        return buildingVm;
-    }
-
     public async Task CreateAsync(BuildingUpsertViewModel model, CancellationToken ct)
     {
         bool existsWithSameParametres = await unitOfWork.BuildingRepository.ExistsAnyWithSameParametersAsync(model.BuildingName, model.Code, ct);
@@ -105,17 +106,30 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         await unitOfWork.SaveChangesAsync(ct);
     }
 
+    public async Task<BuildingUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
+    {
+        var building = await unitOfWork.BuildingRepository.GetWithoutDependenciesAsync(id, ct);
+        if (building is null)
+        {
+            throw new EntityNotFoundException("Budova nebyla nalezena.");
+        }
+
+        var buildingVm = mapper.Map<BuildingUpsertViewModel>(building);
+
+        return buildingVm;
+    }
+
     public async Task UpdateAsync(int id, BuildingUpsertViewModel model, CancellationToken ct)
     {
         if (id != model.Id)
         {
-            throw new Exception("Neplatný identifikátor budovy.");
+            throw new EntityNotFoundException("Neplatný identifikátor budovy.");
         }
 
         var building = await unitOfWork.BuildingRepository.GetWithoutDependenciesAsync(model.Id, ct);
         if (building is null)
         {
-            throw new Exception("Budova nebyla nalezena.");
+            throw new EntityNotFoundException("Budova nebyla nalezena.");
         }
 
         bool existsWithSameParametres = await unitOfWork.BuildingRepository.ExistsAnyWithSameParametersAsync(model.BuildingName, model.Code, building.Id, ct);
@@ -127,18 +141,5 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         mapper.Map(model, building);
 
         await unitOfWork.SaveChangesAsync(ct);
-    }
-
-    public async Task<BuildingUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
-    {
-        var building = await unitOfWork.BuildingRepository.GetWithoutDependenciesAsync(id, ct);
-        if (building is null)
-        {
-            throw new Exception("Budova nebyla nalezena.");
-        }
-
-        var buildingVm = mapper.Map<BuildingUpsertViewModel>(building);
-
-        return buildingVm;
     }
 }

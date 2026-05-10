@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
@@ -47,7 +48,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         var deparmentVm = mapper.Map<EmployeeViewModel>(employee);
@@ -60,7 +61,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         string term;
@@ -93,7 +94,6 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         };
     }
 
-    // udělat ROOLBACK !!
     public async Task CreateAsync(EmployeeCreateViewModel model, CancellationToken ct)
     {
         var employee = mapper.Map<Employee>(model);
@@ -102,16 +102,28 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
 
         string randomPart = Random.Shared.Next(100, 1000).ToString();
         string personalNumber = $"{timeStamp}{randomPart}";
-        personalNumber = personalNumber.Length > 16 ? personalNumber.Substring(0, 16) : personalNumber.PadLeft(16, '0');
+        personalNumber = personalNumber.Length > 16 ? personalNumber[..16] : personalNumber.PadLeft(16, '0');
 
         employee.PersonalNumber = personalNumber;
         employee.CreatedAt = DateTime.UtcNow;
         employee.IsActive = true;
 
-        await unitOfWork.EmployeeRepository.AddAsync(employee, ct);
-        await unitOfWork.SaveChangesAsync(ct);
+        await using var transaction = await unitOfWork.BeginTransactionAsync(ct);
 
-        await applicationUserService.MarkEmployeeProfileCompletedAsync(employee.ApplicationUserId, ct);
+        try
+        {
+            await unitOfWork.EmployeeRepository.AddAsync(employee, ct);
+            await unitOfWork.SaveChangesAsync(ct);
+
+            await applicationUserService.MarkEmployeeProfileCompletedAsync(employee.ApplicationUserId, ct);
+
+            await transaction.CommitAsync(ct);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(ct);
+            throw;
+        }
     }
 
     public async Task<EmployeeUpdateViewModel> GetForUpdateAsync(int id, CancellationToken ct)
@@ -119,7 +131,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         var employeeVm = mapper.Map<EmployeeUpdateViewModel>(employee);
@@ -131,13 +143,13 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
     {
         if (id != model.Id)
         {
-            throw new Exception("Neplatný identifikátor zaměstnance.");
+            throw new EntityNotFoundException("Neplatný identifikátor zaměstnance.");
         }
 
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         employee.FirstName = model.FirstName;
@@ -146,24 +158,12 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         await unitOfWork.SaveChangesAsync(ct);
     }
 
-    private async Task<List<SelectListItem>> GetPositionsSelectListAsync(CancellationToken ct)
-    {
-        var positions = await unitOfWork.PositionRepository.GetAllAsyncWithPositions(ct);
-
-        return positions.Select(x => new SelectListItem
-        {
-            Value = x.Id.ToString(),
-            Text = $" {x.Department.DepartmentName}: {x.PositionName}"
-        })
-        .ToList();
-    }
-
     public async Task<EmployeePositionUpdateViewModel> GetForPositionUpdateAsync(int id, CancellationToken ct)
     {
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         var employeeVm = mapper.Map<EmployeePositionUpdateViewModel>(employee);
@@ -185,13 +185,13 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
     {
         if (id != model.EmployeeId)
         {
-            throw new Exception("Neplatný identifikátor zaměstnance.");
+            throw new EntityNotFoundException("Neplatný identifikátor zaměstnance.");
         }
 
         var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
         if (employee is null)
         {
-            throw new Exception("Zaměstnanec nebyl nalezen.");
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
         var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(model.PositionId, ct);
@@ -203,5 +203,17 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
         mapper.Map(model, employee);
 
         await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    private async Task<List<SelectListItem>> GetPositionsSelectListAsync(CancellationToken ct)
+    {
+        var positions = await unitOfWork.PositionRepository.GetAllAsyncWithPositions(ct);
+
+        return positions.Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = $" {x.Department.DepartmentName}: {x.PositionName}"
+        })
+        .ToList();
     }
 }

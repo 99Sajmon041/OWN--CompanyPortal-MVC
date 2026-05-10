@@ -1,7 +1,6 @@
-﻿using CompanyPortal.Application.Models.Employee;
-using CompanyPortal.Application.Services.Implementations;
+﻿using CompanyPortal.Application.Exceptions;
+using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
-using CompanyPortal.Domain.Entities;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +30,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             var result = await employeeService.GetDetailAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -47,7 +46,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             string term = await employeeService.ChangeStatusAsync(id, ct);
             TempData["Success"] = $"{term} proběhla úspěšně.";
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
         }
@@ -83,6 +82,11 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
             return RedirectToAction(nameof(List));
         }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
         catch (Exception ex)
         {
             var result = await employeeService.GetForCreate(ct);
@@ -93,7 +97,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             ModelState.AddModelError(string.Empty, ex.Message);
 
             return View(model);
-        }   
+        }
     }
 
 
@@ -105,7 +109,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             var result = await employeeService.GetForUpdateAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -119,7 +123,6 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
     {
         if (!ModelState.IsValid)
         {
-            var result = await employeeService.GetForUpdateAsync(id, ct);
             return View(model);
         }
 
@@ -130,10 +133,10 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
             return RedirectToAction(nameof(List));
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
-            return View(model);
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
         }
     }
 
@@ -145,7 +148,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             var result = await employeeService.GetForPositionUpdateAsync(id, ct);
             return View(result);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -172,8 +175,16 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
             return RedirectToAction(nameof(List));
         }
+        catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
         catch (Exception ex)
         {
+            var result = await employeeService.GetForPositionUpdateAsync(id, ct);
+            model.Positions = result.Positions;
+
             ModelState.AddModelError(string.Empty, ex.Message);
             return View(model);
         }
