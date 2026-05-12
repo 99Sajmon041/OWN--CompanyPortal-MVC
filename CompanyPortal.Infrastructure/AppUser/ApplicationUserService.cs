@@ -6,6 +6,7 @@ using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
@@ -120,11 +121,16 @@ public sealed class ApplicationUserService(IUnitOfWork unitOfWork, UserManager<A
             throw new Exception("Zaměstnanec vedený pod tímto uživatelským účtem je stále aktivní, nejdříve jej deaktivujte jako zaměstnance.");
         }
 
+        if (employee is not null && employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Není možné upravit administrátora.");
+        }
+
         string term;
 
         if (appUser.AccessValidUntil <= DateTime.UtcNow)
         {
-            throw new Exception($"Uživatel byl  již deaktivován k datu: {appUser.AccessValidUntil}.");
+            throw new Exception($"Uživatel byl již deaktivován k datu: {appUser.AccessValidUntil}.");
         }
         else if (appUser.AccessValidUntil is not null)
         {

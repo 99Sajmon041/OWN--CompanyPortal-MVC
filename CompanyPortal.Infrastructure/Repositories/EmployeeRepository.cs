@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Infrastructure.Database;
+using CompanyPortal.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Infrastructure.Repositories;
@@ -27,6 +28,28 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
     {
         return await _context.Employees
             .AsNoTracking()
+            .Include(x => x.Position)
             .FirstOrDefaultAsync(x => x.ApplicationUserId == applicationUserId, ct);
+    }
+
+    public async Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, int excludedEmployeeId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .AnyAsync(x =>
+                x.PositionId == positionId &&
+                x.Id != excludedEmployeeId &&
+                x.IsActive &&
+                x.Position.PositionLevel != PositionLevel.Member,
+                ct);
+    }
+
+    public async Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .AnyAsync(x =>
+                x.PositionId == positionId &&
+                x.IsActive &&
+                x.Position.PositionLevel != PositionLevel.Member,
+                ct);
     }
 }

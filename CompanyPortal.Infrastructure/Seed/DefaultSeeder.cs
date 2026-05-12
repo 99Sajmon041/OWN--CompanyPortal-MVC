@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Domain.Entities;
 using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
+using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +54,7 @@ public sealed class DefaultSeeder(
             return;
         }
 
-        var roleResult = await userManager.AddToRoleAsync(adminUser, "MasterAdmin");
+        var roleResult = await userManager.AddToRoleAsync(adminUser, AppRoles.MasterAdmin);
         if (!roleResult.Succeeded)
         {
             await transaction.RollbackAsync();
@@ -79,7 +80,7 @@ public sealed class DefaultSeeder(
             PositionName = positionsOptions.Value.PositionName,
             Department = department,
             HourlyRate = positionsOptions.Value.HourlyRate,
-            PositionLevel = PositionLevel.GroupLeader
+            PositionLevel = PositionLevel.Administrator
         };
 
         var employee = new Employee

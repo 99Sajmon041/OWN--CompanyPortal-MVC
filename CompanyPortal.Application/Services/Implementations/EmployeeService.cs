@@ -5,9 +5,11 @@ using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
+using CompanyPortal.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,10 +60,15 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
 
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
     {
-        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
         {
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("U administrátora není možné měnit status.");
         }
 
         string term;
@@ -96,6 +103,27 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
 
     public async Task CreateAsync(EmployeeCreateViewModel model, CancellationToken ct)
     {
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId, ct);
+        if (position is null || !position.IsActive)
+        {
+            throw new EntityNotFoundException("Zvolená pozice nebyla nalezena nebo není aktivní.");
+        }
+
+        if (position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Není možné upravit administrátora.");
+        }
+
+        if (position.PositionLevel != PositionLevel.Member)
+        {
+            bool exists = await unitOfWork.EmployeeRepository.ExistsActiveEmployeeOnPositionAsync(model.PositionId, ct);
+
+            if (exists)
+            {
+                throw new Exception("Na této vedoucí pozici je již přiřazen aktivní zaměstnanec.");
+            }
+        }
+
         var employee = mapper.Map<Employee>(model);
 
         string timeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
@@ -128,10 +156,15 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
 
     public async Task<EmployeeUpdateViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
-        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
         {
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Není možné upravit administrátora.");
         }
 
         var employeeVm = mapper.Map<EmployeeUpdateViewModel>(employee);
@@ -146,10 +179,15 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             throw new EntityNotFoundException("Neplatný identifikátor zaměstnance.");
         }
 
-        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
         {
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Není možné upravit administrátora.");
         }
 
         employee.FirstName = model.FirstName;
@@ -160,10 +198,15 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
 
     public async Task<EmployeePositionUpdateViewModel> GetForPositionUpdateAsync(int id, CancellationToken ct)
     {
-        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
         {
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Není možné upravit administrátora.");
         }
 
         var employeeVm = mapper.Map<EmployeePositionUpdateViewModel>(employee);
@@ -194,10 +237,25 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(model.PositionId, ct);
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId, ct);
         if (position is null || !position.IsActive)
         {
             throw new Exception("Nově zvolená pozice nebyla nalezena nebo již není aktivní.");
+        }
+
+        if (position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Pozici administrátora nelze přiřadit.");
+        }
+
+        if (position.PositionLevel != PositionLevel.Member)
+        {
+            bool exists = await unitOfWork.EmployeeRepository.ExistsActiveEmployeeOnPositionAsync(position.Id, employee.Id, ct);
+
+            if (exists)
+            {
+                throw new Exception("Na této vedoucí pozici je již přiřazen aktivní zaměstnanec.");
+            }
         }
 
         mapper.Map(model, employee);
@@ -209,10 +267,14 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
     {
         var positions = await unitOfWork.PositionRepository.GetAllAsyncWithPositions(ct);
 
+        positions = positions
+            .Where(x => x.PositionLevel != PositionLevel.Administrator)
+            .ToList();
+
         return positions.Select(x => new SelectListItem
         {
             Value = x.Id.ToString(),
-            Text = $" {x.Department.DepartmentName}: {x.PositionName}"
+            Text = $"({x.PositionLevel.GetDisplayName()}) {x.Department.DepartmentName}: {x.PositionName} "
         })
         .ToList();
     }

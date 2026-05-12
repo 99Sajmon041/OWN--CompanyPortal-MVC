@@ -10,6 +10,12 @@ public sealed class EmployeeProfileRequiredMiddleware(CompanyPortalDbContext con
 {
     public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
+        if (IsAllowedPath(httpContext))
+        {
+            await next(httpContext);
+            return;
+        }
+
         string? applicationUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var applicationUser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == applicationUserId);
 
@@ -43,10 +49,10 @@ public sealed class EmployeeProfileRequiredMiddleware(CompanyPortalDbContext con
         PathString path = httpContext.Request.Path;
 
         return path.StartsWithSegments("/Access/EmployeeProfileRequired")
+            || path.StartsWithSegments("/Access/EmployeeProfileNotActive")
             || path.StartsWithSegments("/css")
             || path.StartsWithSegments("/js")
             || path.StartsWithSegments("/lib")
-            || path.StartsWithSegments("/Access/EmployeeProfileNotActive")
             || path.StartsWithSegments("/favicon.ico");
     }
 }

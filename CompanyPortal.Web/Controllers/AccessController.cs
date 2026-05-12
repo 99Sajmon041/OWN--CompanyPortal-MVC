@@ -11,11 +11,6 @@ public sealed class AccessController : Controller
         return View();
     }
 
-    public IActionResult AccessDenied()
-    {
-        return View();
-    }
-
     public IActionResult EmployeeProfileNotActive()
     {
         return View();

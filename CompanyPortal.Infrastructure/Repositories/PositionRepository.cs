@@ -39,11 +39,13 @@ public sealed class PositionRepository(CompanyPortalDbContext context) : BaseRep
     public async Task<bool> ExistsManagingPositionInDepartmentAsync(int departmentId, CancellationToken ct)
     {
         return await _context.Positions
-            .AnyAsync(x => x.DepartmentId == departmentId &&
-                (x.PositionLevel == PositionLevel.GroupLeader
-                || x.PositionLevel == PositionLevel.Director
-                || x.PositionLevel == PositionLevel.Board),
-                ct);
+            .AnyAsync(x => x.DepartmentId == departmentId && x.PositionLevel == PositionLevel.GroupLeader, ct);
+    }
+
+    public async Task<bool> ExistsManagingPositionInDepartmentAsync(int departmentId, int positionId, CancellationToken ct)
+    {
+        return await _context.Positions
+            .AnyAsync(x => x.DepartmentId == departmentId && x.PositionLevel == PositionLevel.GroupLeader && x.Id != positionId, ct);
     }
 
     public async Task<List<Position>> GetAllAsyncWithPositions(CancellationToken ct)

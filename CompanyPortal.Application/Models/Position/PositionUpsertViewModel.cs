@@ -11,7 +11,10 @@ public sealed class PositionUpsertViewModel
     [Required(ErrorMessage = "Název pozice je povinný")]
     [StringLength(50, ErrorMessage = "Název pozice musí mít 5 - 50 znaků", MinimumLength = 5)]
     public string PositionName { get; set; } = default!;
-    public PositionLevel PositionLevel { get; set; }  //readonly (disabled)
+    public ICollection<SelectListItem> PositionLevels { get; set; } = [];
+
+    [Range(1, 4, ErrorMessage = "Úroveň pozice je povinná")]
+    public PositionLevel PositionLevel { get; set; }
 
     [Range(50, double.MaxValue, ErrorMessage = "Hodinová sazba musí být alespoň 50 Kč.")]
     public decimal HourlyRate { get; set; }

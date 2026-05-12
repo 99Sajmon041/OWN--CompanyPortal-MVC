@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyPortal.Web.Controllers;
 
-[AllowAnonymous]
+[Authorize]
 public sealed class ErrorController : Controller
 {
     [Route("Error/StatusCode")]

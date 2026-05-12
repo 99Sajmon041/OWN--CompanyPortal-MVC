@@ -5,6 +5,7 @@ using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
@@ -65,6 +66,11 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
+        if (position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Status pozice administrator nelze změnit.");
+        }
+
         string term;
 
         if (position.IsActive)
@@ -93,10 +99,12 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
     public async Task<PositionUpsertViewModel> GetForCreateAsync(CancellationToken ct)
     {
         var deparments = await GetDepartmentSelectListItemsAsync(ct);
+        var positionLevels = GetPositionLevels();
 
         return new PositionUpsertViewModel
         {
-            Departments = deparments
+            Departments = deparments,
+            PositionLevels = positionLevels
         };
     }
 
@@ -108,10 +116,19 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new Exception("Pozice se stejným názvem již existuje.");
         }
 
-        var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(model.DepartmentId, ct);
-        if (existsManagingPosition)
+        if (model.PositionLevel == PositionLevel.Administrator)
         {
-            throw new Exception($"V daném oddělení již existuje pozice s úrovní: {model.PositionLevel.GetDisplayName()}.");
+            throw new Exception("Pozici administrátora nelze vytvořit ani upravit.");
+        }
+
+        if (model.PositionLevel != PositionLevel.Member)
+        {
+            var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(model.DepartmentId, ct);
+
+            if (existsManagingPosition)
+            {
+                throw new Exception("V daném oddělení již existuje vedoucí pozice.");
+            }
         }
 
         var position = mapper.Map<Position>(model);
@@ -129,6 +146,11 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
+        if (position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Pozici administrátora nelze upravit.");
+        }
+
         var deparments = await GetDepartmentSelectListItemsAsync(ct);
         foreach (var deparment in deparments)
         {
@@ -139,8 +161,11 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             }
         }
 
+        var positionLevels = GetPositionLevels();
         var positionVm = mapper.Map<PositionUpsertViewModel>(position);
+
         positionVm.Departments = deparments;
+        positionVm.PositionLevels = positionLevels;
 
         return positionVm;
     }
@@ -158,15 +183,33 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
+        if (position.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Pozici administrátora nelze upravit.");
+        }
+
+        if (model.PositionLevel == PositionLevel.Administrator)
+        {
+            throw new Exception("Pozici administrátora nelze vytvořit ani upravit.");
+        }
+
+        if (model.PositionLevel != PositionLevel.Member)
+        {
+            var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(
+                model.DepartmentId,
+                position.Id, 
+                ct);
+
+            if (existsManagingPosition)
+            {
+                throw new Exception("V daném oddělení již existuje vedoucí pozice.");
+            }
+        }
+
         bool existsWithSameParameters = await unitOfWork.PositionRepository.ExistsAnyWithSameParametersAsync(model.PositionName, model.Id, ct);
         if (existsWithSameParameters)
         {
             throw new Exception("Pozice se stejným názvem již existuje.");
-        }
-
-        if (model.PositionLevel != position.PositionLevel)
-        {
-            model.PositionLevel = position.PositionLevel;
         }
 
         mapper.Map(model, position);
@@ -184,5 +227,21 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             Text = x.DepartmentName
         })
         .ToList();
+    }
+
+    private List<SelectListItem> GetPositionLevels()
+    {
+        var positionLevels = OptionsBuilder.GetEnumSelectList<PositionLevel>();
+
+        foreach (var positionLevel in positionLevels)
+        {
+            if (positionLevel.Text == PositionLevel.Administrator.GetDisplayName())
+            {
+                positionLevel.Disabled = true;
+                break;
+            }
+        }
+
+        return positionLevels;
     }
 }

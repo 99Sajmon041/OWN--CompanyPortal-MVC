@@ -14,4 +14,16 @@ public static class OptionsBuilder
             new SelectListItem { Value = "50", Text = "50" }
         ];
     }
+
+    public static List<SelectListItem> GetEnumSelectList<TEnum>() where TEnum : Enum
+    {
+        return Enum.GetValues(typeof(TEnum))
+            .Cast<TEnum>()
+            .Select(x => new SelectListItem
+            {
+                Value = Convert.ToInt32(x).ToString(),
+                Text = x.GetDisplayName()
+            })
+            .ToList();
+    }
 }

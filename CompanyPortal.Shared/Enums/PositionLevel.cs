@@ -10,9 +10,6 @@ public enum PositionLevel
     [Display(Name = "Vedoucí skupiny")]
     GroupLeader = 2,
 
-    [Display(Name = "Ředitel")]
-    Director = 3,
-
-    [Display(Name = "Člen vedení")]
-    Board = 4
+    [Display(Name = "Master admin")]
+    Administrator = 3
 }

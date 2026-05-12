@@ -4,7 +4,6 @@ using CompanyPortal.Infrastructure.Database;
 using CompanyPortal.Shared.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CompanyPortal.Web.Middlewares;
 
@@ -41,8 +40,20 @@ public sealed class ApplicationUserClaimsMiddleware(
 
         identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
         identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName ?? ""));
-        identity.AddClaim(new Claim("ApplicationUserId", user.Id));
         identity.AddClaim(new Claim("DomainUserName", user.DomainUserName));
+
+        var employee = await context.Employees
+            .Include(x => x.Position)
+            .ThenInclude(x => x.Department)
+            .FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id);
+
+        if (employee is not null)
+        {
+            identity.AddClaim(new Claim("EmployeeId", employee.Id.ToString()));
+            identity.AddClaim(new Claim("PositionId", employee.PositionId.ToString()));
+            identity.AddClaim(new Claim("PositionLevel", employee.Position.PositionLevel.ToString()));
+            identity.AddClaim(new Claim("DepartmentId", employee.Position.DepartmentId.ToString()));
+        }
 
         foreach (string role in roles)
         {
@@ -96,7 +107,7 @@ public sealed class ApplicationUserClaimsMiddleware(
             return null;
         }
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(); 
 
         return user;
     }

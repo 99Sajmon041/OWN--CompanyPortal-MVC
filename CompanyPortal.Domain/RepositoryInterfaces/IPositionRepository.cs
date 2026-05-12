@@ -10,4 +10,5 @@ public interface IPositionRepository : IBaseRepository<Position>
     Task<bool> ExistsAnyWithSameParametersAsync(string positionName, CancellationToken ct);
     Task<bool> ExistsManagingPositionInDepartmentAsync(int departmentId, CancellationToken ct);
     Task<List<Position>> GetAllAsyncWithPositions(CancellationToken ct);
+    Task<bool> ExistsManagingPositionInDepartmentAsync(int departmentId, int positionId, CancellationToken ct);
 }
