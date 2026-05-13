@@ -10,4 +10,5 @@ public sealed class EmployeeViewModel
     public string PositionName { get; set; } = default!;
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
+    public ICollection<string> Roles { get; set; } = [];
 }

@@ -15,7 +15,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Application.Services.Implementations;
 
-public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApplicationUserService applicationUserService) : IEmployeeService
+public sealed class EmployeeService(
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IRoleAssignmentService roleAssignmentService,
+    IApplicationUserService applicationUserService) : IEmployeeService
 {
     public async Task<PagedResult<EmployeeViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct)
     {
@@ -53,9 +57,12 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var deparmentVm = mapper.Map<EmployeeViewModel>(employee);
+        var employeeVm = mapper.Map<EmployeeViewModel>(employee);
 
-        return deparmentVm;
+        var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
+        employeeVm .Roles = roles.ToList();
+
+        return employeeVm;
     }
 
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
@@ -144,6 +151,7 @@ public sealed class EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, IApp
             await unitOfWork.SaveChangesAsync(ct);
 
             await applicationUserService.MarkEmployeeProfileCompletedAsync(employee.ApplicationUserId, ct);
+            await roleAssignmentService.AssignRolesByPositionLevelAsync(employee.ApplicationUserId, position.PositionLevel, ct);
 
             await transaction.CommitAsync(ct);
         }

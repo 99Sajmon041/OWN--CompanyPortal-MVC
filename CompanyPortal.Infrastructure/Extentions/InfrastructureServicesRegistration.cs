@@ -25,6 +25,7 @@ public static class InfrastructureServicesRegistration
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IApplicationUserService, ApplicationUserService>();
+        services.AddScoped<IRoleAssignmentService, RoleAssignmentService>();
 
         return services;
     }
