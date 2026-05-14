@@ -61,7 +61,9 @@ public sealed class EmployeeService(
         var employeeVm = mapper.Map<EmployeeViewModel>(employee);
 
         var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
-        employeeVm .Roles = roles.ToList();
+        employeeVm.Roles = roles.ToList();
+        employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct)
+            ?? "Zatím není určen";
 
         return employeeVm;
     }

@@ -8,5 +8,6 @@ public sealed class DepartmentDetailViewModel
     public string DepartmentName { get; set; } = default!;
     public bool IsActive { get; set; }
     public string BuildingName { get; set; } = default!;
+    public string SupervisorName { get; set; } = default!;
     public ICollection<PositionListItemViewModel> Positions { get; set; } = [];
 }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin, HR, ManagingDirector, ExecutiveManager")]
+[Authorize(Roles = "MasterAdmin, HR")]
 public sealed class PositionController(IPositionService positionService) : Controller
 {
     [HttpGet]

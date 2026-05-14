@@ -9,4 +9,5 @@ public interface IEmployeeRepository : IBaseRepository<Employee>
     IQueryable<Employee> GetAllWithPositionAsync();
     Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, int excludedEmployeeId, CancellationToken ct);
     Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, CancellationToken ct);
+    Task<string?> GetGroupLeaderNameAsync(int deparmentId, CancellationToken ct);
 }

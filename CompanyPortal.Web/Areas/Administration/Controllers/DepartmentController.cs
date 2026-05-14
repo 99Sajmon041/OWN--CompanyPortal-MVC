@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin, HR, ManagingDirector, ExecutiveManager")]
+[Authorize(Roles = "MasterAdmin, HR")]
 public class DepartmentController(IDepartmentService departmentService) : Controller
 {
     public async Task<IActionResult> List(CancellationToken ct)

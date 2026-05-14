@@ -46,13 +46,14 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
 
     public async Task<DepartmentDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
     {
-        var deparment = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
-        if (deparment is null)
+        var department = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
+        if (department is null)
         {
             throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
-        var deparmentVm = mapper.Map<DepartmentDetailViewModel>(deparment);
+        var deparmentVm = mapper.Map<DepartmentDetailViewModel>(department);
+        deparmentVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(id, ct) ?? "Není určen";
 
         return deparmentVm;
     }

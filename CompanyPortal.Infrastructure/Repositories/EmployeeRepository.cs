@@ -52,4 +52,16 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
                 x.Position.PositionLevel != PositionLevel.Member,
                 ct);
     }
+
+    public async Task<string?> GetGroupLeaderNameAsync(int deparmentId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .Where(x =>
+                x.IsActive &&
+                x.Position.IsActive &&
+                x.Position.DepartmentId == deparmentId &&
+                x.Position.PositionLevel == PositionLevel.GroupLeader)
+            .Select(x => x.FirstName + " " + x.LastName)
+            .FirstOrDefaultAsync(ct);
+    }
 }
