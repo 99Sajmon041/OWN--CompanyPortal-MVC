@@ -34,7 +34,7 @@ public sealed class RoleAssignmentService(UserManager<ApplicationUser> userManag
         return roles;
     }
 
-    public async Task AssignRolesByPositionLevelAsync(string userId, PositionLevel positionLevel, CancellationToken ct)
+    public async Task SyncRolesByPositionLevelAsync(string userId, PositionLevel positionLevel, CancellationToken ct)
     {
         var user = await userManager.FindByIdAsync(userId);
         if (user is null)
@@ -49,19 +49,22 @@ public sealed class RoleAssignmentService(UserManager<ApplicationUser> userManag
             roles.Add(AppRoles.GroupLeader);
         }
 
-        var currentRoles = await GetUserRolesAsync(userId, ct);
-        var rolesToAdd = roles.Except(currentRoles).ToList();
+        var currentRoles = await userManager.GetRolesAsync(user);
 
-        if (rolesToAdd.Count == 0)
+        var rolesToRemove = currentRoles.ToList();
+        if (rolesToRemove.Count > 0)
         {
-            return;
+            var removeResult = await userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            if (!removeResult.Succeeded)
+            {
+                throw new Exception("Role se nepodařilo odebrat.");
+            }
         }
 
-        var roleResult = await userManager.AddToRolesAsync(user, rolesToAdd);
-        
-        if (!roleResult.Succeeded)
+        var addResult = await userManager.AddToRolesAsync(user, roles);
+        if (!addResult.Succeeded)
         {
-            throw new Exception($"Role se nepodařilo přiřadit uživateli. Error: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            throw new Exception("Role se nepodařilo přiřadit.");
         }
     }
 

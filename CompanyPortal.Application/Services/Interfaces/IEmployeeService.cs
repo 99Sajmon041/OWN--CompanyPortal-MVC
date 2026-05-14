@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Paging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CompanyPortal.Application.Services.Interfaces;
 
@@ -15,4 +16,6 @@ public interface IEmployeeService
     Task UpdateAsync(int id, EmployeeUpdateViewModel model, CancellationToken ct);
     Task<EmployeePositionUpdateViewModel> GetForPositionUpdateAsync(int id, CancellationToken ct);
     Task UpdatePositionAsync(int id, EmployeePositionUpdateViewModel model, CancellationToken ct);
+    Task<List<SelectListItem>> GetForUpsertAdditionalRoleAsync(int id, CancellationToken ct);
+    Task UpsertAdditionalRoleAsync(int id, string role, CancellationToken ct);
 }

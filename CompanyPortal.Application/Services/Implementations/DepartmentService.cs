@@ -5,6 +5,7 @@ using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
@@ -58,10 +59,15 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
 
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
     {
-        var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
+        var department = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
         if (department is null)
         {
             throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
+        }
+
+        if (department.DepartmentName == SystemDepartment.ALL.ToString())
+        {
+            throw new Exception("Systémové oddělení ALL nelze upravit ani deaktivovat.");
         }
 
         string term;
@@ -123,6 +129,11 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
             throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
         }
 
+        if (department.DepartmentName == SystemDepartment.ALL.ToString())
+        {
+            throw new Exception("Systémové oddělení ALL nelze upravit.");
+        }
+
         var buildings = await GetBuildingSelectListItemsAsync(ct);
         foreach (var building in buildings)
         {
@@ -150,6 +161,11 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         if (department is null)
         {
             throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
+        }
+
+        if (department.DepartmentName == SystemDepartment.ALL.ToString())
+        {
+            throw new Exception("Systémové oddělení ALL nelze upravit.");
         }
 
         var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, department.Id, ct);

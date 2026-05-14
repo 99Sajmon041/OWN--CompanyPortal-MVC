@@ -5,6 +5,7 @@ using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
+using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
@@ -151,7 +152,7 @@ public sealed class EmployeeService(
             await unitOfWork.SaveChangesAsync(ct);
 
             await applicationUserService.MarkEmployeeProfileCompletedAsync(employee.ApplicationUserId, ct);
-            await roleAssignmentService.AssignRolesByPositionLevelAsync(employee.ApplicationUserId, position.PositionLevel, ct);
+            await roleAssignmentService.SyncRolesByPositionLevelAsync(employee.ApplicationUserId, position.PositionLevel, ct);
 
             await transaction.CommitAsync(ct);
         }
@@ -266,6 +267,8 @@ public sealed class EmployeeService(
             }
         }
 
+        await roleAssignmentService.SyncRolesByPositionLevelAsync(employee.ApplicationUserId, position.PositionLevel, ct);
+
         mapper.Map(model, employee);
 
         await unitOfWork.SaveChangesAsync(ct);
@@ -285,5 +288,63 @@ public sealed class EmployeeService(
             Text = $"({x.PositionLevel.GetDisplayName()}) {x.Department.DepartmentName}: {x.PositionName} "
         })
         .ToList();
+    }
+
+    public async Task<List<SelectListItem>> GetForUpsertAdditionalRoleAsync(int id, CancellationToken ct)
+    {
+        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        if (employee is null)
+        {
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+    
+        var additionalRoles = GetAdditionalRoles();
+    
+        var userRoles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
+
+        var availableRoles = additionalRoles.Except(userRoles).ToList();
+
+        return availableRoles.Select(role => new SelectListItem
+        {
+            Value = role,
+            Text = role
+        })
+        .ToList();
+    }
+
+    public async Task UpsertAdditionalRoleAsync(int id, string role, CancellationToken ct)
+    {
+        var employee = await unitOfWork.EmployeeRepository.GetWithoutDependenciesAsync(id, ct);
+        if (employee is null)
+        {
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        var additionalRoles = GetAdditionalRoles();
+
+        if (!additionalRoles.Contains(role))
+        {
+            throw new Exception("Neplatná role.");
+        }
+
+        var userRoles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
+        if (userRoles.Any(additionalRoles.Contains))
+        {
+            throw new Exception("Zaměstnanec již má přiřazenou dodatečnou roli.");
+        }
+
+        await roleAssignmentService.AssignRoleAsync(employee.ApplicationUserId, role, ct);
+    }
+
+    private static List<string> GetAdditionalRoles()
+    {
+        return
+        [
+            AppRoles.HR,
+            AppRoles.Reception,
+            AppRoles.LunchManager,
+            AppRoles.AttendanceManager,
+            AppRoles.PayrollManager
+        ];
     }
 }

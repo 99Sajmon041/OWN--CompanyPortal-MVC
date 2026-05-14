@@ -16,7 +16,6 @@ public sealed class DefaultSeeder(
     IOptions<List<string>> roleOptions,
     IOptions<SeedAdminEmployee> employeeOptions,
     IOptions<SeedPosition> positionsOptions,
-    IOptions<SeedDepartment> departmentOptions,
     IOptions<SeedBuilding> buildingOptions,
     CompanyPortalDbContext context)
 {
@@ -71,7 +70,7 @@ public sealed class DefaultSeeder(
 
         var department = new Department
         {
-            DepartmentName = departmentOptions.Value.DepartmentName,
+            DepartmentName = SystemDepartment.ALL.ToString(),
             Building = building
         };
 
