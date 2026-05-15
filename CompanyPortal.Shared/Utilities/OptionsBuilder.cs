@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using CompanyPortal.Shared.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CompanyPortal.Shared.Utilities;
 
@@ -25,5 +26,17 @@ public static class OptionsBuilder
                 Text = x.GetDisplayName()
             })
             .ToList();
+    }
+
+    public static List<string> GetAdditionalRoles()
+    {
+        return
+        [
+            AppRoles.HR,
+            AppRoles.Reception,
+            AppRoles.LunchManager,
+            AppRoles.AttendanceManager,
+            AppRoles.PayrollManager
+        ];
     }
 }

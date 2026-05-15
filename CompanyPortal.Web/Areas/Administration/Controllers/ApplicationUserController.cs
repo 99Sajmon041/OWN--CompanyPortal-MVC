@@ -1,5 +1,6 @@
 ﻿using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Services.Interfaces;
+using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin")]
+[Authorize(Roles = AppRoles.MasterAdmin)]
 public class ApplicationUserController(IApplicationUserService applicationUserService) : Controller
 {
     [HttpGet]

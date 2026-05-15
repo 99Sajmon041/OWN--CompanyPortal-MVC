@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
+using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -9,10 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin, HR")]
 public sealed class EmployeeController(IEmployeeService employeeService) : Controller
 {
     [HttpGet]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> List(CancellationToken ct)
     {
         GridRequest gridRequest = GridRequestBuilder.GetFromRequest(Request);
@@ -23,6 +24,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
     }
 
     [HttpGet]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR + ", " + AppRoles.GroupLeader)]
     public async Task<IActionResult> Detail(int id, CancellationToken ct)
     {
         try
@@ -39,6 +41,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> ChangeStatus(int id, CancellationToken ct)
     {
         try
@@ -55,6 +58,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
     }
 
     [HttpGet]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> Create(CancellationToken ct)
     {
         var result = await employeeService.GetForCreate(ct);
@@ -63,6 +67,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> Create(EmployeeCreateViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)
@@ -102,6 +107,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
 
     [HttpGet]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> Update(int id, CancellationToken ct)
     {
         try
@@ -119,6 +125,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> Update(int id, EmployeeUpdateViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)
@@ -141,6 +148,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
     }
 
     [HttpGet]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> PositionUpdate(int id, CancellationToken ct)
     {
         try
@@ -158,6 +166,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
     public async Task<IActionResult> PositionUpdate(int id, EmployeePositionUpdateViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid)

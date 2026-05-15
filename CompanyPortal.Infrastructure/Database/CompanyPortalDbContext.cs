@@ -70,6 +70,10 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
             entity.Property(x => x.CreatedAt)
                 .IsRequired();
 
+            entity.Property(x => x.ImageUrl)
+                .HasMaxLength(255)
+                .IsRequired();
+
             entity.HasIndex(x => x.PersonalNumber)
                 .IsUnique();
 

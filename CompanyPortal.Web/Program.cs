@@ -1,9 +1,11 @@
 using CompanyPortal.Application.CurrentIdentity;
 using CompanyPortal.Application.Extentions;
+using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Infrastructure.Extentions;
 using CompanyPortal.Web.CurrentIdentity;
 using CompanyPortal.Web.Middlewares;
 using CompanyPortal.Web.Seed;
+using CompanyPortal.Web.ServicesImplementatios;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;
@@ -44,6 +46,7 @@ builder.Services.AddScoped<EmployeeProfileRequiredMiddleware>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 

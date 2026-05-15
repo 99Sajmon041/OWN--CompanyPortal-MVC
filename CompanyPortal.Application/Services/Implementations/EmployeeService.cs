@@ -6,7 +6,6 @@ using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
-using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
@@ -22,7 +21,8 @@ public sealed class EmployeeService(
     IMapper mapper,
     IRoleAssignmentService roleAssignmentService,
     IApplicationUserService applicationUserService,
-    ICurrentUserService currentUserService) : IEmployeeService
+    ICurrentUserService currentUserService,
+    IImageService imageService) : IEmployeeService
 {
     public async Task<PagedResult<EmployeeViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct)
     {
@@ -152,6 +152,7 @@ public sealed class EmployeeService(
 
         try
         {
+            employee.ImageUrl = await imageService.SaveImageAsync(model.ImageFile, "employees", ct);
             await unitOfWork.EmployeeRepository.AddAsync(employee, ct);
             await unitOfWork.SaveChangesAsync(ct);
 
@@ -163,6 +164,12 @@ public sealed class EmployeeService(
         catch
         {
             await transaction.RollbackAsync(ct);
+
+            if (!string.IsNullOrWhiteSpace(employee.ImageUrl))
+            {
+                imageService.DeleteImage(employee.ImageUrl);
+            }
+
             throw;
         }
     }
@@ -201,6 +208,13 @@ public sealed class EmployeeService(
         if (employee.Position.PositionLevel == PositionLevel.Administrator)
         {
             throw new Exception("Není možné upravit administrátora.");
+        }
+
+        if (model.ImageFile is not null && model.ImageFile.Length > 0)
+        {
+            imageService.DeleteImage(employee.ImageUrl);
+
+            employee.ImageUrl = await imageService.SaveImageAsync(model.ImageFile, "employees", ct);
         }
 
         employee.FirstName = model.FirstName;
@@ -302,7 +316,7 @@ public sealed class EmployeeService(
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var additionalRoles = GetAdditionalRoles();
+        var additionalRoles = OptionsBuilder.GetAdditionalRoles();
 
         var userRoles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
 
@@ -324,7 +338,7 @@ public sealed class EmployeeService(
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var additionalRoles = GetAdditionalRoles();
+        var additionalRoles = OptionsBuilder.GetAdditionalRoles();
 
         if (!additionalRoles.Contains(role))
         {
@@ -348,9 +362,7 @@ public sealed class EmployeeService(
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var employeeVm = mapper.Map<EmployeeProfileViewModel>(employee); // dodat do mapperu
-
-        employeeVm.DeparmentName = employee.Position.Department.DepartmentName;
+        var employeeVm = mapper.Map<EmployeeProfileViewModel>(employee);
 
         var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
         employeeVm.Roles = roles.ToList();
@@ -377,17 +389,5 @@ public sealed class EmployeeService(
         }
 
         return employeeVm;
-    }
-
-    private static List<string> GetAdditionalRoles()
-    {
-        return
-        [
-            AppRoles.HR,
-            AppRoles.Reception,
-            AppRoles.LunchManager,
-            AppRoles.AttendanceManager,
-            AppRoles.PayrollManager
-        ];
     }
 }

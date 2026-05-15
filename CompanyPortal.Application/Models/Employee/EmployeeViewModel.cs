@@ -11,5 +11,6 @@ public sealed class EmployeeViewModel
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? SupervisorName { get; set; }
+    public string ImageUrl { get; set; } = default!;
     public ICollection<string> Roles { get; set; } = [];
 }

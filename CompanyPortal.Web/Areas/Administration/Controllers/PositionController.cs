@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Application.Services.Interfaces;
+using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Web.RouteHelper;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
-[Authorize(Roles = "MasterAdmin, HR")]
+[Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
 public sealed class PositionController(IPositionService positionService) : Controller
 {
     [HttpGet]

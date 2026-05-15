@@ -36,4 +36,7 @@ public sealed class Employee : IHasId, IHasActive
     [FilterOrder(5)]
     [FilterLabel("Zaměstnanec vytvořen")]
     public DateTime CreatedAt { get; set; }
+
+    [NotFilterable]
+    public string ImageUrl { get; set; } = default!;
 }
