@@ -1,13 +1,24 @@
+using CompanyPortal.Application.Exceptions;
+using CompanyPortal.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyPortal.Web.Controllers;
 
 [Authorize]
-public class HomeController : Controller
+public class HomeController(IEmployeeService employee) : Controller
 {
-    public IActionResult Index()
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken ct)
     {
-        return View();
+        try
+        {
+            var profile = await employee.GetEmployeeProfileAsync(ct);
+            return View(profile);
+        }
+        catch (EntityNotFoundException ex)
+        {
+            return RedirectToAction("Status", "Error", new { code = 404, message = ex.Message });
+        }
     }
 }

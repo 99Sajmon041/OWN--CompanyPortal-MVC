@@ -7,9 +7,10 @@ namespace CompanyPortal.Web.Controllers;
 public sealed class ErrorController : Controller
 {
     [Route("Error/StatusCode")]
-    public IActionResult Status(int code)
+    public IActionResult Status(int code, string? message)
     {
         ViewData["StatusCode"] = code;
+        ViewData["ExceptionMessage"] = message;
 
         return View();
     }

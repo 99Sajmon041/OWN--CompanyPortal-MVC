@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CompanyPortal.Application.Exceptions;
+﻿using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.ApplicationUser;
-using CompanyPortal.Application.Models.Department;
 using CompanyPortal.Application.Services.Interfaces;
-using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Shared.Enums;
 using CompanyPortal.Shared.Grid.Common;

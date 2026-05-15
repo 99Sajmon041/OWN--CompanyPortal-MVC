@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using CompanyPortal.Application.CurrentIdentity;
 using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Employee;
 using CompanyPortal.Application.Services.Interfaces;
@@ -20,7 +21,8 @@ public sealed class EmployeeService(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IRoleAssignmentService roleAssignmentService,
-    IApplicationUserService applicationUserService) : IEmployeeService
+    IApplicationUserService applicationUserService,
+    ICurrentUserService currentUserService) : IEmployeeService
 {
     public async Task<PagedResult<EmployeeViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct)
     {
@@ -299,9 +301,9 @@ public sealed class EmployeeService(
         {
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
-    
+
         var additionalRoles = GetAdditionalRoles();
-    
+
         var userRoles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
 
         var availableRoles = additionalRoles.Except(userRoles).ToList();
@@ -336,6 +338,45 @@ public sealed class EmployeeService(
         }
 
         await roleAssignmentService.AssignRoleAsync(employee.ApplicationUserId, role, ct);
+    }
+
+    public async Task<EmployeeProfileViewModel> GetEmployeeProfileAsync(CancellationToken ct)
+    {
+        var employee = await unitOfWork.EmployeeRepository.GetByApplicationUserIdWithDependenciesAsync(currentUserService.UserId, ct);
+        if (employee is null)
+        {
+            throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
+        }
+
+        var employeeVm = mapper.Map<EmployeeProfileViewModel>(employee); // dodat do mapperu
+
+        employeeVm.DeparmentName = employee.Position.Department.DepartmentName;
+
+        var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
+        employeeVm.Roles = roles.ToList();
+
+        if (employee.Position.PositionLevel == PositionLevel.GroupLeader)
+        {
+            employeeVm.SupervisorName = "Já (vedoucí týmu)";
+        }
+        else
+        {
+            employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct)
+                ?? "Zatím není určen";
+        }
+
+        var subordinates = await unitOfWork.EmployeeRepository.GetAllByDepartmentAsync(employee.Position.DepartmentId, employee.Id, ct);
+        if (subordinates.Count > 0)
+        {
+            employeeVm.SubordinateEmployees = subordinates.Select(x => new SelectListItem
+            {
+                Text = $"{x.FirstName} {x.LastName} ({x.Position.PositionName})",
+                Value = x.Id.ToString()
+            })
+            .ToList();
+        }
+
+        return employeeVm;
     }
 
     private static List<string> GetAdditionalRoles()

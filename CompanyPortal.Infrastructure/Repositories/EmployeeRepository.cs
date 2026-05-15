@@ -24,11 +24,29 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
             .Include(x => x.Position);
     }
 
+    public async Task<List<Employee>> GetAllByDepartmentAsync(int departmentId, int currentEmployeeId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .AsNoTracking()
+            .Include(x => x.Position)
+            .Where(x => x.Position.DepartmentId == departmentId && x.Id != currentEmployeeId)
+            .ToListAsync(ct);
+    }
+
     public async Task<Employee?> GetByApplicationUserIdAsync(string applicationUserId, CancellationToken ct)
     {
         return await _context.Employees
             .AsNoTracking()
             .Include(x => x.Position)
+            .FirstOrDefaultAsync(x => x.ApplicationUserId == applicationUserId, ct);
+    }
+
+    public async Task<Employee?> GetByApplicationUserIdWithDependenciesAsync(string applicationUserId, CancellationToken ct)
+    {
+        return await _context.Employees
+            .AsNoTracking()
+            .Include(x => x.Position)
+            .ThenInclude(x => x.Department)
             .FirstOrDefaultAsync(x => x.ApplicationUserId == applicationUserId, ct);
     }
 

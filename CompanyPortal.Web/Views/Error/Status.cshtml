@@ -1,5 +1,7 @@
 ﻿@{
     int statusCode = ViewData["StatusCode"] as int? ?? 500;
+    string exceptionMessage = ViewData["ExceptionMessage"] as string ?? string.Empty;
+
     ViewData["Title"] = $"Chyba {statusCode}";
 }
 
@@ -15,6 +17,11 @@
 else if (statusCode == 404)
 {
     <p>Požadovaná stránka nebyla nalezena - Status kód: @statusCode</p>
+
+    if (!string.IsNullOrWhiteSpace(exceptionMessage))
+    {
+        <p>@exceptionMessage</p>
+    }
 }
 else
 {

@@ -18,4 +18,5 @@ public interface IEmployeeService
     Task UpdatePositionAsync(int id, EmployeePositionUpdateViewModel model, CancellationToken ct);
     Task<List<SelectListItem>> GetForUpsertAdditionalRoleAsync(int id, CancellationToken ct);
     Task UpsertAdditionalRoleAsync(int id, string role, CancellationToken ct);
+    Task<EmployeeProfileViewModel> GetEmployeeProfileAsync(CancellationToken ct);
 }
