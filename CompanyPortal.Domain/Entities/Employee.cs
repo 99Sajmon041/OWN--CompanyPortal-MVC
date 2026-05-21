@@ -39,4 +39,7 @@ public sealed class Employee : IHasId, IHasActive
 
     [NotFilterable]
     public string ImageUrl { get; set; } = default!;
+
+    [NotFilterable]
+    public ICollection<EmployeeDevice> EmployeeDevices { get; set; } = [];
 }

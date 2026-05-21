@@ -11,6 +11,8 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
     public DbSet<Position> Positions { get; set; } = default!;
     public DbSet<Department> Departments { get; set; } = default!;
     public DbSet<Building> Buildings { get; set; } = default!;
+    public DbSet<Device> Devices { get; set; } = default!;
+    public DbSet<EmployeeDevice> EmployeeDevices { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -84,6 +86,11 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
                 .WithOne()
                 .HasForeignKey<Employee>(x => x.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(x => x.EmployeeDevices)
+                .WithOne(x => x.Employee)
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<ApplicationUser>(entity =>
@@ -122,6 +129,39 @@ public sealed class CompanyPortalDbContext(DbContextOptions<CompanyPortalDbConte
 
             entity.HasIndex(x => x.Code)
                 .IsUnique();
+        });
+
+        builder.Entity<Device>(entity =>
+        {
+            entity.Property(x => x.SerialNumber)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(x => x.DeviceName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Note)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.DeviceType)
+                .IsRequired();
+
+            entity.HasIndex(x => x.SerialNumber).IsUnique();
+
+            entity.HasMany(x => x.EmployeeDevices)
+                .WithOne(x => x.Device)
+                .HasForeignKey(x => x.DeviceId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<EmployeeDevice>(entity =>
+        {
+            entity.Property(x => x.Note)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.AssignedAt)
+                .IsRequired();
         });
     }
 }

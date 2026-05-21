@@ -5,7 +5,7 @@ using CompanyPortal.Infrastructure.Extentions;
 using CompanyPortal.Web.CurrentIdentity;
 using CompanyPortal.Web.Middlewares;
 using CompanyPortal.Web.Seed;
-using CompanyPortal.Web.ServicesImplementatios;
+using CompanyPortal.Web.ServicesImplementations;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;

@@ -22,7 +22,7 @@ public sealed class ImageService(IWebHostEnvironment environment) : IImageServic
         string fileName = $"{Guid.NewGuid()}{extension}";
         string filePath = Path.Combine(uploadsFolder, fileName);
 
-        await using FileStream stream = new FileStream(filePath, FileMode.Create);
+        await using FileStream stream = new(filePath, FileMode.Create);
         await imageFile.CopyToAsync(stream, ct);
 
         return $"/images/{folderName}/{fileName}";
