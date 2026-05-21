@@ -2,7 +2,7 @@
 
 namespace CompanyPortal.Domain.RepositoryInterfaces;
 
-public interface IBaseRepository<T> where T : class, IHasId, IHasActive
+public interface IBaseRepository<T> where T : class, IHasId
 {
     Task AddAsync(T entity, CancellationToken ct);
     IQueryable<T> GetAllQueryable();

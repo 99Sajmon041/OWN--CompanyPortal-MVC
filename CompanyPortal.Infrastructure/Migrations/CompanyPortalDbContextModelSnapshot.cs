@@ -84,6 +84,45 @@ namespace CompanyPortal.Infrastructure.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Device", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DeviceName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("DeviceType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeprecated")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("PurchasedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SerialNumber")
+                        .IsUnique();
+
+                    b.ToTable("Devices");
+                });
+
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -136,6 +175,39 @@ namespace CompanyPortal.Infrastructure.Migrations
                     b.HasIndex("PositionId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.EmployeeDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ReturnedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeDevices");
                 });
 
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Position", b =>
@@ -419,6 +491,25 @@ namespace CompanyPortal.Infrastructure.Migrations
                     b.Navigation("Position");
                 });
 
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.EmployeeDevice", b =>
+                {
+                    b.HasOne("CompanyPortal.Domain.Entities.Device", "Device")
+                        .WithMany("EmployeeDevices")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CompanyPortal.Domain.Entities.Employee", "Employee")
+                        .WithMany("EmployeeDevices")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Position", b =>
                 {
                     b.HasOne("CompanyPortal.Domain.Entities.Department", "Department")
@@ -489,6 +580,16 @@ namespace CompanyPortal.Infrastructure.Migrations
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Device", b =>
+                {
+                    b.Navigation("EmployeeDevices");
+                });
+
+            modelBuilder.Entity("CompanyPortal.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("EmployeeDevices");
                 });
 
             modelBuilder.Entity("CompanyPortal.Domain.Entities.Position", b =>

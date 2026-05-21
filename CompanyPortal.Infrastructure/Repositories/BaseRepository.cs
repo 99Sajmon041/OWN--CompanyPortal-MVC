@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Infrastructure.Repositories;
 
-public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository<T> where T : class, IHasId, IHasActive
+public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository<T> where T : class, IHasId
 {
     private readonly DbSet<T> database = context.Set<T>();
 
@@ -31,8 +31,15 @@ public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository
 
     public async Task<List<T>> GetAllActiveAsync(CancellationToken ct)
     {
+        if (typeof(IHasActive).IsAssignableFrom(typeof(T)) == false)
+        {
+            throw new Exception($"Typ / Entita: {typeof(T).Name} nepodporuje 'IsActive'.");
+        }
+            
         return await database
+            .Cast<IHasActive>()
             .Where(x => x.IsActive)
+            .Cast<T>()
             .ToListAsync(ct);
     }
 

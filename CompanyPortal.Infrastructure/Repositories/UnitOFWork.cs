@@ -10,11 +10,15 @@ public sealed class UnitOfWork(CompanyPortalDbContext context) : IUnitOfWork
     private IBuildingRepository? buildingRepository;
     private IPositionRepository? positionRepository;
     private IDepartmentRepository? departmentRepository;
+    private IDeviceRepository? deviceRepository;
+    private IEmployeeDeviceRepository? employeeDeviceRepository;
 
     public IEmployeeRepository EmployeeRepository => employeeRepository ??= new EmployeeRepository(context);
     public IBuildingRepository BuildingRepository => buildingRepository ??= new BuildingRepository(context);
     public IPositionRepository PositionRepository => positionRepository ??= new PositionRepository(context);
     public IDepartmentRepository DepartmentRepository => departmentRepository ??= new DepartmentRepository(context);
+    public IEmployeeDeviceRepository EmployeeDeviceRepository => employeeDeviceRepository ??= new EmployeeDeviceRepository(context);
+    public IDeviceRepository DeviceRepository => deviceRepository ??= new DeviceRepository(context);
 
     public async Task SaveChangesAsync(CancellationToken ct)
     {
