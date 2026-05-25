@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CompanyPortal.Application.Models.Building;
 using CompanyPortal.Application.Models.Department;
+using CompanyPortal.Application.Models.Device;
 using CompanyPortal.Application.Models.Employee;
+using CompanyPortal.Application.Models.EmployeeDevice;
 using CompanyPortal.Application.Models.Position;
 using CompanyPortal.Domain.Entities;
 
@@ -79,5 +81,20 @@ public sealed class MappingProfile : Profile
         CreateMap<Employee, EmployeeProfileViewModel>()
             .ForMember(x => x.PositionName, opt => opt.MapFrom(x => x.Position.PositionName))
             .ForMember(x => x.DepartmentName, opt => opt.MapFrom(x => x.Position.Department.DepartmentName));
+
+        CreateMap<Device, DeviceListItemViewModel>();
+
+        CreateMap<Device, DeviceDetailViewModel>();
+
+        CreateMap<EmployeeDevice, EmployeeDeviceViewModel>()
+            .ForMember(x => x.EmployeeFullName, opt => opt.MapFrom(x => $"{x.Employee.FirstName} {x.Employee.LastName}"))
+            .ForMember(x => x.DeviceName, opt => opt.MapFrom(x => x.Device.DeviceName))
+            .ForMember(x => x.SerialNumber, opt => opt.MapFrom(x => x.Device.SerialNumber));
+
+        CreateMap<DeviceUpsertViewModel, Device>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.EmployeeDevices, opt => opt.Ignore());
+
+        CreateMap<Device, DeviceUpsertViewModel>();
     }
 }
