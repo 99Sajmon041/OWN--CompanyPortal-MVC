@@ -29,8 +29,6 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         query = query.ApplySorting(gridRequest.SortOrder);
         query = query.ApplyPaging(pager);
 
-        var buildings = await query.ToListAsync(ct);
-
         var items = await query
             .ProjectTo<BuildingListItemViewModel>(mapper.ConfigurationProvider)
             .ToListAsync(ct);
@@ -44,7 +42,7 @@ public sealed class BuildingService(IUnitOfWork unitOfWork, IMapper mapper) : IB
         };
     }
 
-        public async Task<BuildingDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
+    public async Task<BuildingDetailViewModel> GetDetailAsync(int id, CancellationToken ct)
     {
         var building = await unitOfWork.BuildingRepository.GetByIdAsync(id, ct);
         if (building is null)

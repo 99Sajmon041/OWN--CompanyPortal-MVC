@@ -30,10 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Administration\Views\" />
     <Folder Include="Areas\Administration\Views\Building\" />
     <Folder Include="Areas\Administration\Views\Department\" />
     <Folder Include="Areas\Administration\Views\Employee\" />
+    <Folder Include="Areas\Administration\Views\Device\" />
     <Folder Include="Areas\Administration\Views\Position\" />
   </ItemGroup>
 

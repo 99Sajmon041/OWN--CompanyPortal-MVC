@@ -9,6 +9,15 @@ public sealed class EmployeeDeviceRepository(CompanyPortalDbContext context) : B
 {
     private readonly CompanyPortalDbContext _context = context;
 
+    public async Task<List<EmployeeDevice>> GetActiveByEmployeeIdAsync(int employeeId, CancellationToken ct)
+    {
+        return await _context.EmployeeDevices
+            .AsNoTracking()
+            .Where(x => x.EmployeeId == employeeId && x.ReturnedAt == null)
+            .Include(x => x.Device)
+            .ToListAsync(ct);
+    }
+
     public IQueryable<EmployeeDevice> GetAllQueryableWithDependencies()
     {
         return _context.EmployeeDevices

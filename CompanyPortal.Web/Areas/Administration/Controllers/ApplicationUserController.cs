@@ -10,7 +10,7 @@ namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
 [Authorize(Roles = AppRoles.MasterAdmin)]
-public class ApplicationUserController(IApplicationUserService applicationUserService) : Controller
+public sealed class ApplicationUserController(IApplicationUserService applicationUserService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> List(CancellationToken ct)

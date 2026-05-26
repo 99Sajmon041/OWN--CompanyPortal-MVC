@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyPortal.Web.Controllers;
 
 [Authorize]
-public class HomeController(IEmployeeService employee) : Controller
+public sealed class HomeController(IEmployeeService employee) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)

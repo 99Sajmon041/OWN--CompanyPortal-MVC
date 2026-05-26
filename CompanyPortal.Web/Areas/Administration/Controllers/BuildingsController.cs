@@ -11,7 +11,7 @@ namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
 [Authorize(Roles = AppRoles.MasterAdmin)]
-public class BuildingsController(IBuildingService buildingService) : Controller
+public sealed class BuildingsController(IBuildingService buildingService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> List(CancellationToken ct)

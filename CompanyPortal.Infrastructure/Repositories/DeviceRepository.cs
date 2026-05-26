@@ -9,6 +9,20 @@ public sealed class DeviceRepository(CompanyPortalDbContext context) : BaseRepos
 {
     private readonly CompanyPortalDbContext _context = context;
 
+    public async Task<bool> ExistsAnyWithSameSnAsync(string serialNumber, CancellationToken ct)
+    {
+        return await _context.Devices
+            .AsNoTracking()
+            .AnyAsync(x => x.SerialNumber == serialNumber, ct);
+    }
+
+    public async Task<bool> ExistsAnyWithSameSnAsync(string serialNumber, int id, CancellationToken ct)
+    {
+        return await _context.Devices
+        .AsNoTracking()
+        .AnyAsync(x => x.SerialNumber == serialNumber && x.Id != id, ct);
+    }
+
     public async Task<Device?> GetDetailByIdAsync(int id, CancellationToken ct)
     {
         return await _context.Devices

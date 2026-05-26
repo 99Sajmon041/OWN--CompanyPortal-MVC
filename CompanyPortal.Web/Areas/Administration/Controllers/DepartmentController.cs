@@ -11,7 +11,7 @@ namespace CompanyPortal.Web.Areas.Administration.Controllers;
 
 [Area("Administration")]
 [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
-public class DepartmentController(IDepartmentService departmentService) : Controller
+public sealed class DepartmentController(IDepartmentService departmentService) : Controller
 {
     public async Task<IActionResult> List(CancellationToken ct)
     {
