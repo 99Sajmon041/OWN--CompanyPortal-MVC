@@ -14,5 +14,4 @@ public interface IDeviceService
     Task<DeviceUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct);
     Task UpdateAsync(int id, DeviceUpsertViewModel model, CancellationToken ct);
     Task DeprecateAsync(int id, CancellationToken ct);
-    Task<List<SelectListItem>> GetAllAvailableAsync(CancellationToken ct);
 }

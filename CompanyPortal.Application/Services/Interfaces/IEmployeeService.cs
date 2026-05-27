@@ -8,7 +8,7 @@ namespace CompanyPortal.Application.Services.Interfaces;
 public interface IEmployeeService
 {
     Task<PagedResult<EmployeeViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct);
-    Task<EmployeeViewModel?> GetDetailAsync(int id, CancellationToken ct);
+    Task<(EmployeeViewModel?, List<SelectListItem>)> GetDetailAsync(int id, CancellationToken ct);
     Task<string> ChangeStatusAsync(int id, CancellationToken ct);
     Task<EmployeeCreateViewModel> GetForCreate(CancellationToken ct);
     Task CreateAsync(EmployeeCreateViewModel model, CancellationToken ct);

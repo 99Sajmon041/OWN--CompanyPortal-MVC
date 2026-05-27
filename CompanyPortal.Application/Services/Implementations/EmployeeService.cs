@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using CompanyPortal.Application.CurrentIdentity;
 using CompanyPortal.Application.Exceptions;
 using CompanyPortal.Application.Models.Employee;
+using CompanyPortal.Application.Models.EmployeeDevice;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Domain.Entities;
 using CompanyPortal.Domain.RepositoryInterfaces;
@@ -52,7 +53,7 @@ public sealed class EmployeeService(
         };
     }
 
-    public async Task<EmployeeViewModel?> GetDetailAsync(int id, CancellationToken ct)
+    public async Task<(EmployeeViewModel?, List<SelectListItem>)> GetDetailAsync(int id, CancellationToken ct)
     {
         var employee = await unitOfWork.EmployeeRepository.GetByIdAsync(id, ct);
         if (employee is null)
@@ -67,7 +68,12 @@ public sealed class EmployeeService(
         employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct)
             ?? "Zatím není určen";
 
-        return employeeVm;
+        var employeeDevices = await unitOfWork.EmployeeDeviceRepository.GetBorrowedByEmployeeIdAsync(id, ct);
+        employeeVm.EmployeeDevices = mapper.Map<List<EmployeeDeviceViewModel>>(employeeDevices);
+
+        var availableDevices = await GetAllAvailableAsync(ct);
+
+        return (employeeVm, availableDevices);
     }
 
     public async Task<string> ChangeStatusAsync(int id, CancellationToken ct)
@@ -389,5 +395,17 @@ public sealed class EmployeeService(
         }
 
         return employeeVm;
+    }
+
+    private async Task<List<SelectListItem>> GetAllAvailableAsync(CancellationToken ct)
+    {
+        var availableDevices = await unitOfWork.DeviceRepository.GetAllAvailableAsync(ct);
+
+        return availableDevices.Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = $"{x.DeviceName} - ({x.SerialNumber})"
+        })
+        .ToList();
     }
 }

@@ -155,16 +155,4 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
         device.IsDeprecated = true;
         await unitOfWork.SaveChangesAsync(ct);
     }
-
-    public async Task<List<SelectListItem>> GetAllAvailableAsync(CancellationToken ct)
-    {
-        var availableDevices = await unitOfWork.DeviceRepository.GetAllAvailableAsync(ct);
-
-        return availableDevices.Select(x => new SelectListItem
-        {
-            Value = x.Id.ToString(),
-            Text = $"{x.DeviceName} - ({x.SerialNumber})"
-        })
-        .ToList();
-    }
 }

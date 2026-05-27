@@ -29,8 +29,10 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
     {
         try
         {
-            var result = await employeeService.GetDetailAsync(id, ct);
-            return View(result);
+            var (employee, availableDevices) = await employeeService.GetDetailAsync(id, ct);
+            ViewBag.AvailableDevices = availableDevices;
+
+            return View(employee);
         }
         catch (EntityNotFoundException ex)
         {

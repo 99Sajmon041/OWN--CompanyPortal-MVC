@@ -1,4 +1,6 @@
-﻿namespace CompanyPortal.Application.Models.Employee;
+﻿using CompanyPortal.Application.Models.EmployeeDevice;
+
+namespace CompanyPortal.Application.Models.Employee;
 
 public sealed class EmployeeViewModel
 {
@@ -13,4 +15,5 @@ public sealed class EmployeeViewModel
     public string? SupervisorName { get; set; }
     public string ImageUrl { get; set; } = default!;
     public ICollection<string> Roles { get; set; } = [];
+    public ICollection<EmployeeDeviceViewModel> EmployeeDevices { get; set; } = [];
 }
