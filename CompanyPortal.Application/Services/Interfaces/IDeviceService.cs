@@ -1,6 +1,7 @@
 ﻿using CompanyPortal.Application.Models.Device;
 using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Paging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CompanyPortal.Application.Services.Interfaces;
 
@@ -13,4 +14,5 @@ public interface IDeviceService
     Task<DeviceUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct);
     Task UpdateAsync(int id, DeviceUpsertViewModel model, CancellationToken ct);
     Task DeprecateAsync(int id, CancellationToken ct);
+    Task<List<SelectListItem>> GetAllAvailableAsync(CancellationToken ct);
 }

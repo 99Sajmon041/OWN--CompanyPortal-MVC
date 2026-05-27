@@ -8,4 +8,5 @@ public interface IDeviceRepository : IBaseRepository<Device>
     Task<bool> HasAnyActiveBorrowingAsync(int id, CancellationToken ct);
     Task<bool> ExistsAnyWithSameSnAsync(string serialNumber, CancellationToken ct);
     Task<bool> ExistsAnyWithSameSnAsync(string serialNumber, int id, CancellationToken ct);
+    Task<List<Device>> GetAllAvailableAsync(CancellationToken ct);
 }

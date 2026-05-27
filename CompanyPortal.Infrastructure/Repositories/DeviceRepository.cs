@@ -38,4 +38,13 @@ public sealed class DeviceRepository(CompanyPortalDbContext context) : BaseRepos
             .AsNoTracking()
             .AnyAsync(x => x.DeviceId == id && x.ReturnedAt == null, ct);
     }
+
+    public async Task<List<Device>> GetAllAvailableAsync(CancellationToken ct)
+    {
+        return await _context.Devices
+            .AsNoTracking()
+            .Include(x => x.EmployeeDevices)
+            .Where(x => !x.IsDeprecated && !x.EmployeeDevices.Any(ed => ed.ReturnedAt == null))
+            .ToListAsync(ct);
+    }
 }

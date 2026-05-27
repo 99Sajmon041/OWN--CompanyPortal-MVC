@@ -9,7 +9,7 @@ public sealed class EmployeeDeviceRepository(CompanyPortalDbContext context) : B
 {
     private readonly CompanyPortalDbContext _context = context;
 
-    public async Task<List<EmployeeDevice>> GetActiveByEmployeeIdAsync(int employeeId, CancellationToken ct)
+    public async Task<List<EmployeeDevice>> GetBorrowedByEmployeeIdAsync(int employeeId, CancellationToken ct)
     {
         return await _context.EmployeeDevices
             .AsNoTracking()
@@ -24,12 +24,5 @@ public sealed class EmployeeDeviceRepository(CompanyPortalDbContext context) : B
             .AsNoTracking()
             .Include(x => x.Employee)
             .Include(x => x.Device);
-    }
-
-    public async Task<bool> IsDeviceCurrentlyBorrowedAsync(int deviceId, CancellationToken ct)
-    {
-        return await _context.EmployeeDevices
-            .AsNoTracking()
-            .AnyAsync(x => x.DeviceId == deviceId && x.ReturnedAt == null, ct);
     }
 }

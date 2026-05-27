@@ -10,6 +10,7 @@ using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
 using CompanyPortal.Shared.Utilities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Application.Services.Implementations;
@@ -153,5 +154,17 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
 
         device.IsDeprecated = true;
         await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<SelectListItem>> GetAllAvailableAsync(CancellationToken ct)
+    {
+        var availableDevices = await unitOfWork.DeviceRepository.GetAllAvailableAsync(ct);
+
+        return availableDevices.Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = $"{x.DeviceName} - ({x.SerialNumber})"
+        })
+        .ToList();
     }
 }
