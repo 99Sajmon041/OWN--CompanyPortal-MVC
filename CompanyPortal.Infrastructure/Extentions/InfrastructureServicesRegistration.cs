@@ -3,6 +3,7 @@ using CompanyPortal.Domain.RepositoryInterfaces;
 using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
 using CompanyPortal.Infrastructure.Repositories;
+using CompanyPortal.Web.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +20,27 @@ public static class InfrastructureServicesRegistration
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
 
-        services.AddIdentityCore<ApplicationUser>()
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<CompanyPortalDbContext>();
+        services.AddIdentityCore<ApplicationUser>(options =>
+        {
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<CompanyPortalDbContext>();
+
+        services.Configure<SeedAdmin>(
+            configuration.GetSection("SeedAdmin"));
+
+        services.Configure<List<string>>(
+            configuration.GetSection("SeedRoles"));
+
+        services.Configure<SeedAdminEmployee>(
+            configuration.GetSection("SeedAdminEmployee"));
+
+        services.Configure<SeedPosition>(
+            configuration.GetSection("SeedPosition"));
+
+        services.Configure<SeedBuilding>(
+            configuration.GetSection("SeedBuilding"));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IApplicationUserService, ApplicationUserService>();

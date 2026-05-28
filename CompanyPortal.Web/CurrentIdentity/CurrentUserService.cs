@@ -7,7 +7,7 @@ namespace CompanyPortal.Web.CurrentIdentity;
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
     private ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
-    public string UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+    public string UserId => User?.FindFirstValue("ApplicationUserId") ?? string.Empty;
     public string DomainUserName => User?.FindFirstValue("DomainUserName") ?? string.Empty;
     public int EmployeeId => int.TryParse(User?.FindFirstValue("EmployeeId"), out var id) ? id : 0;
     public int PositionId => int.TryParse(User?.FindFirstValue("PositionId"), out var id) ? id : 0;

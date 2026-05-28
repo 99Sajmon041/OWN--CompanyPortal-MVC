@@ -36,9 +36,9 @@ public sealed class ApplicationUserClaimsMiddleware(
 
         IList<string> roles = await userManager.GetRolesAsync(user);
 
-        ClaimsIdentity identity = new ClaimsIdentity("CompanyPortalApplication");
+        ClaimsIdentity identity = new("CompanyPortalApplication");
 
-        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+        identity.AddClaim(new Claim("ApplicationUserId", user.Id));
         identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName ?? ""));
         identity.AddClaim(new Claim("DomainUserName", user.DomainUserName));
 
@@ -71,7 +71,7 @@ public sealed class ApplicationUserClaimsMiddleware(
 
         string userName = GetUserNameFromDomainName(domainName);
 
-        ApplicationUser user = new ApplicationUser
+        var user = new ApplicationUser
         {
             UserName = userName,
             Email = $"{userName}@companyportal.local",

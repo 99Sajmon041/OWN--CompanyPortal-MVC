@@ -3,16 +3,17 @@ using CompanyPortal.Infrastructure.AppUser;
 using CompanyPortal.Infrastructure.Database;
 using CompanyPortal.Shared.Authorization;
 using CompanyPortal.Shared.Enums;
+using CompanyPortal.Web.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace CompanyPortal.Web.Seed;
+namespace CompanyPortal.Infrastructure.Seed;
 
 public sealed class DefaultSeeder(
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager,
-    IOptions<SeedAdminOptions> userOptions,
+    IOptions<SeedAdmin> userOptions,
     IOptions<List<string>> roleOptions,
     IOptions<SeedAdminEmployee> employeeOptions,
     IOptions<SeedPosition> positionsOptions,
@@ -90,7 +91,8 @@ public sealed class DefaultSeeder(
             ApplicationUserId = adminUser.Id,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
-            Position = position
+            Position = position,
+            ImageUrl = "/images/employees/default-user.png"
         };
 
         context.Employees.Add(employee);

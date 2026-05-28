@@ -16,7 +16,8 @@ public sealed class EmployeeProfileRequiredMiddleware(CompanyPortalDbContext con
             return;
         }
 
-        string? applicationUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? applicationUserId = httpContext.User.FindFirstValue("ApplicationUserId");
+        
         var applicationUser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == applicationUserId);
 
         if (string.IsNullOrWhiteSpace(applicationUserId) || applicationUser is null || applicationUser.AccessValidUntil <= DateTime.UtcNow)

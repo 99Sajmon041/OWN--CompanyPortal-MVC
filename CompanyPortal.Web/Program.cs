@@ -2,9 +2,9 @@ using CompanyPortal.Application.CurrentIdentity;
 using CompanyPortal.Application.Extentions;
 using CompanyPortal.Application.Services.Interfaces;
 using CompanyPortal.Infrastructure.Extentions;
+using CompanyPortal.Infrastructure.Seed;
 using CompanyPortal.Web.CurrentIdentity;
 using CompanyPortal.Web.Middlewares;
-using CompanyPortal.Web.Seed;
 using CompanyPortal.Web.ServicesImplementations;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.DataProtection;
@@ -67,9 +67,11 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseStatusCodePagesWithReExecute("/Error/StatusCode", "?code={0}");
-app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseAuthentication();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseMiddleware<ApplicationUserClaimsMiddleware>();
 app.UseMiddleware<EmployeeProfileRequiredMiddleware>();
 app.UseAuthorization();
