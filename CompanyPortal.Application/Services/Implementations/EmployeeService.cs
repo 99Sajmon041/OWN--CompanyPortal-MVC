@@ -386,10 +386,14 @@ public sealed class EmployeeService(
         var subordinates = await unitOfWork.EmployeeRepository.GetAllByDepartmentAsync(employee.Position.DepartmentId, employee.Id, ct);
         if (subordinates.Count > 0)
         {
-            employeeVm.SubordinateEmployees = subordinates.Select(x => new SelectListItem
+
+
+
+            employeeVm.SubordinateEmployees = subordinates.Select(x => new EmployeeShortViewModel
             {
-                Text = $"{x.FirstName} {x.LastName} ({x.Position.PositionName})",
-                Value = x.Id.ToString()
+                Id = x.Id,
+                FullName = $"{x.FirstName} {x.LastName}",
+                PositionName = x.Position.PositionName
             })
             .ToList();
         }
