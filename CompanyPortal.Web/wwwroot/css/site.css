@@ -30,3 +30,17 @@ html {
     border-left: 4px solid var(--bs-primary);
     border-bottom: 2px solid var(--bs-primary);
 }
+
+.scrollable-table-top {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 16px;
+}
+
+.scrollable-table-top-inner {
+    height: 1px;
+}
+
+.scrollable-table-wrapper {
+    overflow-x: auto;
+}

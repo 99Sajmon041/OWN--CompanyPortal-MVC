@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CompanyPortal.Application.Models.Employee;
 
 public sealed class EmployeeProfileViewModel
 {
+    [Display(Name = "ID")]
     public int Id { get; set; }
 
     [Display(Name = "Osobní číslo")]
