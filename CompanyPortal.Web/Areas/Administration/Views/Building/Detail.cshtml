@@ -1,0 +1,140 @@
+﻿@model BuildingDetailViewModel
+
+@{
+    ViewData["Title"] = "Detail budovy";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">@Model.BuildingName</h1>
+        <p class="text-muted mb-0">Detail budovy a přiřazených oddělení.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil-square me-1"></i> Upravit
+        </a>
+
+        <a asp-action="List" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Zpět
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-building me-2"></i> Informace o budově
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Název</dt>
+                    <dd class="col-sm-8 fw-semibold">@Model.BuildingName</dd>
+
+                    <dt class="col-sm-4 text-muted">Kód</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-secondary">@Model.Code</span>
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Stav</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i> Aktivní
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i> Neaktivní
+                            </span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Popis</dt>
+                    <dd class="col-sm-8">
+                        @if (!string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            @Model.Description
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">Popis není vyplněn.</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-diagram-3 me-2"></i> Oddělení v budově
+                    </h5>
+                    <small class="text-muted">Seznam oddělení přiřazených k této budově.</small>
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Departments.Count
+                </span>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                @if (Model.Departments.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var department in Model.Departments.OrderBy(x => x.DepartmentName))
+                        {
+                            <a asp-controller="Department"
+                               asp-action="Detail"
+                               asp-route-id="@department.Id"
+                               class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center">
+
+                                <div>
+                                    <div class="fw-semibold">
+                                        @department.DepartmentName
+                                    </div>
+
+                                    <small class="text-muted">
+                                        @department.BuildingName
+                                    </small>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (department.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktivní</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Neaktivní</span>
+                                    }
+
+                                    <i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-3 mb-0">
+                            K této budově zatím není přiřazeno žádné oddělení.
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
