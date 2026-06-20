@@ -66,13 +66,15 @@ public sealed class DefaultSeeder(
         {
             BuildingName = buildingOptions.Value.BuildingName,
             Description = buildingOptions.Value.Description,
-            Code = buildingOptions.Value.Code
+            Code = buildingOptions.Value.Code,
+            IsActive = true
         };
 
         var department = new Department
         {
             DepartmentName = SystemDepartment.ALL.ToString(),
-            Building = building
+            Building = building,
+            IsActive = true
         };
 
         var position = new Position
@@ -80,7 +82,8 @@ public sealed class DefaultSeeder(
             PositionName = positionsOptions.Value.PositionName,
             Department = department,
             HourlyRate = positionsOptions.Value.HourlyRate,
-            PositionLevel = PositionLevel.Administrator
+            PositionLevel = PositionLevel.Administrator,
+            IsActive = true
         };
 
         var employee = new Employee
