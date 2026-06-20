@@ -20,7 +20,6 @@ public sealed class DepartmentRepository(CompanyPortalDbContext context) : BaseR
         return await _context.Departments
             .Include(x => x.Building)
             .Include(x => x.Positions)
-            .ThenInclude(x => x.Department)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
     }
 

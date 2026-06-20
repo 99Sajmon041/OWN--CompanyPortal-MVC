@@ -1,0 +1,132 @@
+﻿@model DepartmentDetailViewModel
+
+@{
+    ViewData["Title"] = "Detail oddělení";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">@Model.DepartmentName</h1>
+        <p class="text-muted mb-0">Detail oddělení a přiřazených pozic.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil-square me-1"></i> Upravit
+        </a>
+
+        <a asp-action="List" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Seznam
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-diagram-3 me-2"></i> Informace o oddělení
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Název</dt>
+                    <dd class="col-sm-8 fw-semibold">@Model.DepartmentName</dd>
+
+                    <dt class="col-sm-4 text-muted">Budova</dt>
+                    <dd class="col-sm-8 fw-semibold">@Model.BuildingName</dd>
+
+                    <dt class="col-sm-4 text-muted">Stav</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i> Aktivní
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i> Neaktivní
+                            </span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Vedoucí</dt>
+                    <dd class="col-sm-8 text-primary">
+                        <i class="bi bi-person-badge me-1"></i>
+                        @Model.SupervisorName
+                    </dd>
+                </dl>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-person-workspace me-2"></i> Pozice v oddělení
+                    </h5>
+                    <small class="text-muted">Seznam pozic přiřazených k tomuto oddělení.</small>
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Positions.Count
+                </span>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                @if (Model.Positions.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var position in Model.Positions.OrderBy(x => x.PositionLevel))
+                        {
+                            <a asp-controller="Position"
+                               asp-action="Detail"
+                               asp-route-id="@position.Id"
+                               class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center">
+
+                                <div>
+                                    <div class="fw-semibold">
+                                        @position.PositionName
+                                    </div>
+
+                                    <small class="text-primary">
+                                        @position.PositionLevel
+                                    </small>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (position.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktivní</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Neaktivní</span>
+                                    }
+
+                                    <i class="bi bi-chevron-right text-muted"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-3 mb-0">
+                            K tomuto oddělení zatím není přiřazené žádné Pozice.
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
