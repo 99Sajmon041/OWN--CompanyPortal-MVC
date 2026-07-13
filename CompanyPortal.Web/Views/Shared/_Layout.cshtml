@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Firemní Portál (Intranet)</title>
+    <title>@ViewData["Title"] - Firemní Portál</title>
 
     <link rel="stylesheet" href="~/lib/companyportal-theme/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/companyportal-theme/bootstrap-icons/bootstrap-icons.css" />
@@ -20,7 +20,7 @@
 
             <ul class="nav nav-pills flex-column gap-1">
                 <li class="nav-item">
-                    <a class="nav-link text-white" asp-controller="Home" asp-action="Index">
+                    <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
                         <i class="bi bi-house"></i> Můj profil
                     </a>
                 </li>

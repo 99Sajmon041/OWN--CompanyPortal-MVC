@@ -22,7 +22,7 @@ public sealed class Building : IHasId, IHasActive
     public string Code { get; set; } = default!;
 
     [FilterOrder(4)]
-    [FilterLabel("Stav budovy")]
+    [FilterLabel("Aktivní budova")]
     public bool IsActive { get; set; }
 
     [NotFilterable]

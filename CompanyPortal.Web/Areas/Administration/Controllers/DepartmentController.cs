@@ -13,6 +13,7 @@ namespace CompanyPortal.Web.Areas.Administration.Controllers;
 [Authorize(Roles = AppRoles.MasterAdmin + ", " + AppRoles.HR)]
 public sealed class DepartmentController(IDepartmentService departmentService) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> List(CancellationToken ct)
     {
         GridRequest gridRequest = GridRequestBuilder.GetFromRequest(Request);
