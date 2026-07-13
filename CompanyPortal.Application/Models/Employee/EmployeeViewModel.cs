@@ -8,6 +8,7 @@ public sealed class EmployeeViewModel
     public string PersonalNumber { get; set; } = default!;
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
+    public string FullName => $"{FirstName} {LastName}";
     public string ApplicationUserId { get; set; } = default!;
     public string PositionName { get; set; } = default!;
     public bool IsActive { get; set; }

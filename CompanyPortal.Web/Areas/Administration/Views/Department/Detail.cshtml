@@ -11,9 +11,20 @@
     </div>
 
     <div class="d-flex gap-2">
-        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
-            <i class="bi bi-pencil-square me-1"></i> Upravit
-        </a>
+        @if (Model.DepartmentName == SystemDepartment.ALL.ToString())
+        {
+            <span title="Nelze upravit oddělení ALL">
+                <span class="btn btn-warning disabled" aria-disabled="true">
+                    <i class="bi bi-pencil-square me-1"></i> Upravit
+                </span>
+            </span>
+        }
+        else
+        {
+            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil-square me-1"></i> Upravit
+            </a>
+        }
 
         <a asp-action="List" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Seznam

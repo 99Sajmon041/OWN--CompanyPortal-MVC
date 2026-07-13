@@ -140,7 +140,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
 
     public async Task<PositionUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
-        var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(id, ct);
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(id, ct);
         if (position is null)
         {
             throw new EntityNotFoundException("Pozice nebyla nalezena.");
@@ -177,7 +177,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new EntityNotFoundException("Neplatný identifikátor pozice.");
         }
 
-        var position = await unitOfWork.PositionRepository.GetWithoutDependenciesAsync(id, ct);
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(id, ct);
         if (position is null)
         {
             throw new EntityNotFoundException("Pozice nebyla nalezena.");

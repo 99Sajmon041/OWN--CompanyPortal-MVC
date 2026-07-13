@@ -1,0 +1,116 @@
+﻿@model PagedResult<PositionListItemViewModel>
+
+@{
+    ViewData["Title"] = "Seznam pozic";
+}
+
+@await Component.InvokeAsync("GridFilters", new GridFiltersComponentModel
+{
+    ModelType = Model.FilterModelType!,
+    Filters = Model.GridRequest.Filters,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    PageSize = Model.GridRequest.PageSize,
+    SortOrder = Model.GridRequest.SortOrder,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Pozice</h1>
+        <p class="text-muted mb-0">Správa pozice.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Nová pozice
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+
+        <div class="scrollable-table-top">
+            <div class="scrollable-table-top-inner"></div>
+        </div>
+
+        <div class="table-responsive scrollable-table-wrapper">
+            <table class="table table-hover align-middle mb-0 scrollable-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().Id)</th>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().PositionName)</th>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().PositionLevel)</th>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().HourlyRate)</th>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().IsActive)</th>
+                        <th>@Html.DisplayNameFor(x => x.Items.First().DepartmentName)</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Any())
+                    {
+                        @foreach (var position in Model.Items)
+                        {
+                            <tr>
+                                <td class="text-muted">@position.Id</td>
+                                <td class="fw-semibold">@position.PositionName</td>
+                                <td>
+                                    <span class="badge bg-primary">@position.PositionLevel</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@position.HourlyRate.ToString("C")</span>
+                                </td>
+                                <td>
+                                    @if (position.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktivní</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Neaktivní</span>
+                                    }
+                                </td>
+                                <td class="fw-semibold">@position.DepartmentName</td>
+                                <td class="text-end">
+                                    <a asp-action="Detail" asp-route-id="@position.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Update" asp-route-id="@position.Id" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form asp-action="ChangeStatus" asp-route-id="@position.Id" method="post" class="d-inline delete-form">
+
+                                        <button type="submit" data-confirm-message="Opravdu chcete oddělení deaktivovat?" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-toggle-on"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Nebyly nalezeny žádné oddělení.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@await Component.InvokeAsync("Pager", new PagerPartialViewModel
+{
+    Pager = Model.Pager,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    SortOrder = Model.GridRequest.SortOrder,
+    PageSize = Model.GridRequest.PageSize,
+    Filters = Model.GridRequest.Filters,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})

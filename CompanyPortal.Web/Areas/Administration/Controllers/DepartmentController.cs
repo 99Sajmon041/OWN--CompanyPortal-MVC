@@ -112,7 +112,11 @@ public sealed class DepartmentController(IDepartmentService departmentService) :
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
-
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
     }
 
     [HttpPost]

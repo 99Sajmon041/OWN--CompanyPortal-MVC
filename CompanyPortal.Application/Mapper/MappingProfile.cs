@@ -30,6 +30,8 @@ public sealed class MappingProfile : Profile
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
 
+        CreateMap<Department, DepartmentUpsertViewModel>();
+
         CreateMap<Department, DepartmentDetailViewModel>()
             .ForMember(x => x.BuildingName, opt => opt.MapFrom(x => x.Building.BuildingName));  
 

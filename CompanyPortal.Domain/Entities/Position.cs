@@ -24,7 +24,7 @@ public sealed class Position : IHasId, IHasActive
     public int DepartmentId { get; set; }
 
     [FilterOrder(3)]
-    [FilterLabel("Stav pozice")]
+    [FilterLabel("Aktivní pozice")]
     public bool IsActive { get; set; }
     
     [FilterOrder(4)]

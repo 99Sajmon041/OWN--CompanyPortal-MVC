@@ -124,7 +124,7 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
 
     public async Task<DepartmentUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
-        var department = await unitOfWork.DepartmentRepository.GetWithoutDependenciesAsync(id, ct);
+        var department = await unitOfWork.DepartmentRepository.GetByIdAsync(id, ct);
         if (department is null)
         {
             throw new EntityNotFoundException("Oddělení nebylo nalezeno.");
