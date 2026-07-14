@@ -1,0 +1,183 @@
+﻿@model PagedResult<EmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Zaměstnanci";
+}
+
+@await Component.InvokeAsync("GridFilters", new GridFiltersComponentModel
+{
+    ModelType = Model.FilterModelType!,
+    Filters = Model.GridRequest.Filters,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    PageSize = Model.GridRequest.PageSize,
+    SortOrder = Model.GridRequest.SortOrder,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Zaměstnanci</h1>
+        <p class="text-muted mb-0">
+            Správa zaměstnanců, jejich pozic, rolí a přiřazených zařízení.
+        </p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-person-plus me-1"></i> Nový zaměstnanec
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+
+        <div class="scrollable-table-top">
+            <div class="scrollable-table-top-inner"></div>
+        </div>
+
+        <div class="table-responsive scrollable-table-wrapper">
+            <table class="table table-hover align-middle mb-0 scrollable-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Zaměstnanec</th>
+                        <th>Osobní číslo</th>
+                        <th>Pozice</th>
+                        <th>Vytvořen</th>
+                        <th>Stav</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Items.Any())
+                    {
+                        @foreach (var employee in Model.Items)
+                        {
+                            <tr>
+                                <td class="text-muted">
+                                    @employee.Id
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div>
+                                            <div class="fw-semibold">
+                                                @employee.FullName
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(employee.ApplicationUserId))
+                                            {
+                                                <small class="text-muted">
+                                                    Uživatelský účet propojen
+                                                </small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-warning">
+                                                    Bez uživatelského účtu
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="font-monospace fw-semibold">
+                                        @employee.PersonalNumber
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(employee.PositionName))
+                                    {
+                                        <span class="badge bg-primary">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            @employee.PositionName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            Neuvedena
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-muted">
+                                    @employee.CreatedAt.ToString("dd.MM.yyyy")
+                                </td>
+
+                                <td>
+                                    @if (employee.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Aktivní
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Neaktivní
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-end text-nowrap">
+                                    <a asp-action="Detail"  asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary" title="Detail zaměstnance">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Update" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-secondary" title="Upravit zaměstnance">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form asp-action="ChangeStatus" asp-route-id="@employee.Id" method="post" class="d-inline delete-form">
+
+                                        @if (employee.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat zaměstnance" data-confirm-message="Opravdu chcete zaměstnance deaktivovat?">
+                                                <i class="bi bi-toggle-on"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat zaměstnance" data-confirm-message="Opravdu chcete zaměstnance aktivovat?">
+                                                <i class="bi bi-toggle-off"></i>
+                                            </button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="bi bi-people fs-1 text-muted"></i>
+
+                                <p class="text-muted mt-3 mb-0">
+                                    Nebyli nalezeni žádní zaměstnanci.
+                                </p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@await Component.InvokeAsync("Pager", new PagerPartialViewModel
+{
+    Pager = Model.Pager,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    SortOrder = Model.GridRequest.SortOrder,
+    PageSize = Model.GridRequest.PageSize,
+    Filters = Model.GridRequest.Filters,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})

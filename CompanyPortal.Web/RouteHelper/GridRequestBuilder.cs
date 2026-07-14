@@ -6,30 +6,6 @@ namespace CompanyPortal.Web.RouteHelper;
 
 public static class GridRequestBuilder
 {
-    public static Dictionary<string, string> GetRouteValues(GridRequest gridRequest, string sortValue)
-    {
-        Dictionary<string, string> routeValues = new()
-        {
-            ["page"] = "1",
-            ["pageSize"] = gridRequest.PageSize.ToString(),
-            ["filtersCollapsed"] = gridRequest.FiltersCollapsed.ToString().ToLower(),
-            ["sortOrder"] = sortValue
-        };
-
-        foreach (var filter in gridRequest.Filters)
-        {
-            if (string.IsNullOrWhiteSpace(filter.Value))
-            {
-                continue;
-            }
-
-            routeValues[filter.PropertyName] = filter.Value;
-            routeValues[$"{filter.PropertyName}_Operator"] = filter.Operator.ToString();
-        }
-
-        return routeValues;
-    }
-
     public static GridRequest GetFromRequest(HttpRequest request)
     {
         var gridRequest = new GridRequest();
@@ -106,5 +82,17 @@ public static class GridRequestBuilder
         }
 
         return gridRequest;
+    }
+
+    public static Dictionary<string, string> GetSortRouteValues(this HttpRequest request, string sortOrder)
+    {
+        var routeValues = request
+            .Query
+            .ToDictionary(x => x.Key, x => x.Value.ToString());
+
+        routeValues["sortOrder"] = sortOrder;
+        routeValues["page"] = "1";
+
+        return routeValues;
     }
 }

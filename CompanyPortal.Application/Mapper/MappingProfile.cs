@@ -77,8 +77,7 @@ public sealed class MappingProfile : Profile
             .ForMember(x => x.CreatedAt, opt => opt.Ignore());
 
         CreateMap<Employee, EmployeeViewModel>()
-            .ForMember(x => x.PositionName, opt => opt.MapFrom(x => x.Position.PositionName))
-            .ForMember(x => x.Id, opt => opt.Ignore());
+            .ForMember(x => x.PositionName, opt => opt.MapFrom(x => x.Position.PositionName));
 
         CreateMap<Employee, EmployeeProfileViewModel>()
             .ForMember(x => x.PositionName, opt => opt.MapFrom(x => x.Position.PositionName))
