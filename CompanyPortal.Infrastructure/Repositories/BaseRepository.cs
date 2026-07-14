@@ -42,7 +42,10 @@ public class BaseRepository<T>(CompanyPortalDbContext context) : IBaseRepository
             .Cast<T>()
             .ToListAsync(ct);
     }
-
+    public async Task<bool> ExistsByIdAsync(int id, CancellationToken ct)
+    {
+        return await database.AnyAsync(x => x.Id == id, ct);
+    }
 
     //Testing purposes only, not to be used in production code
     public bool ExistsRecord<S>(Dictionary<string, string> properties) where S : class

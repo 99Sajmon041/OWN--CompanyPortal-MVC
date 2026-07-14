@@ -76,6 +76,7 @@ public sealed class PositionController(IPositionService positionService) : Contr
         {
             var result = await positionService.GetForCreateAsync(ct);
             model.Departments = result.Departments;
+            model.PositionLevels = result.PositionLevels;
 
             return View(model);
         }
@@ -112,6 +113,11 @@ public sealed class PositionController(IPositionService positionService) : Contr
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
     }
 
     [HttpPost]
@@ -122,6 +128,7 @@ public sealed class PositionController(IPositionService positionService) : Contr
         {
             var result = await positionService.GetForUpdateAsync(id, ct);
             model.Departments = result.Departments;
+            model.PositionLevels = result.PositionLevels;
 
             return View(model);
         }

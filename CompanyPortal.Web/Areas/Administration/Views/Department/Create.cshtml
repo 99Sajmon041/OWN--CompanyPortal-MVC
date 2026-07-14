@@ -37,7 +37,7 @@
 
                     <div class="mb-3">
                         <label asp-for="BuildingId" class="form-label fw-semibold">Budova</label>
-                        <select asp-for="BuildingId" asp-items="@Model.Buildings" class="form-control">
+                        <select asp-for="BuildingId" asp-items="@Model.Buildings" class="form-select">
                             <option value="">Vyberte budovu</option>
                         </select>
                         <span asp-validation-for="BuildingId" class="text-danger small"></span>

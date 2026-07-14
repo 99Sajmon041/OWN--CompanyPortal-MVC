@@ -116,6 +116,27 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new Exception("Pozice se stejným názvem již existuje.");
         }
 
+        if (!model.DepartmentId.HasValue)
+        {
+            throw new Exception("Oddělení musí být vybráno.");
+        }
+
+        var departmentExists = await unitOfWork.DepartmentRepository.ExistsByIdAsync(model.DepartmentId.Value, ct);
+        if (!departmentExists)
+        {
+            throw new Exception("Vybrané oddělení neexistuje.");
+        }
+
+        if (model.PositionLevel is not PositionLevel positionLevel)
+        {
+             throw new Exception("Úroveň pozice musí být vybrána.");
+        }
+
+        if (!Enum.IsDefined(positionLevel))
+        {
+            throw new Exception("Neplatná úroveň pozice.");
+        }
+
         if (model.PositionLevel == PositionLevel.Administrator)
         {
             throw new Exception("Pozici administrátora nelze vytvořit ani upravit.");
@@ -123,7 +144,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
 
         if (model.PositionLevel != PositionLevel.Member)
         {
-            var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(model.DepartmentId, ct);
+            var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(model.DepartmentId.Value, ct);
 
             if (existsManagingPosition)
             {
@@ -183,6 +204,27 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
             throw new EntityNotFoundException("Pozice nebyla nalezena.");
         }
 
+        if (!model.DepartmentId.HasValue)
+        {
+            throw new Exception("Oddělení musí být vybráno.");
+        }
+
+        var departmentExists = await unitOfWork.DepartmentRepository.ExistsByIdAsync(model.DepartmentId.Value, ct);
+        if (!departmentExists)
+        {
+            throw new Exception("Vybrané oddělení neexistuje.");
+        }
+
+        if (model.PositionLevel is not PositionLevel positionLevel)
+        {
+            throw new Exception("Úroveň pozice musí být vybrána.");
+        }
+
+        if (!Enum.IsDefined(positionLevel))
+        {
+            throw new Exception("Neplatná úroveň pozice.");
+        }
+
         if (position.PositionLevel == PositionLevel.Administrator)
         {
             throw new Exception("Pozici administrátora nelze upravit.");
@@ -196,7 +238,7 @@ public sealed class PositionService(IUnitOfWork unitOfWork, IMapper mapper) : IP
         if (model.PositionLevel != PositionLevel.Member)
         {
             var existsManagingPosition = await unitOfWork.PositionRepository.ExistsManagingPositionInDepartmentAsync(
-                model.DepartmentId,
+                model.DepartmentId.Value,
                 position.Id, 
                 ct);
 

@@ -46,7 +46,7 @@
 
                     <div class="mb-4">
                         <label asp-for="BuildingId" class="form-label fw-semibold">Budova</label>
-                        <select asp-for="BuildingId" asp-items="@Model.Buildings" class="form-control">
+                        <select asp-for="BuildingId" asp-items="@Model.Buildings" class="form-select">
                         </select>
                         <span asp-validation-for="BuildingId" class="text-danger small"></span>
                     </div>

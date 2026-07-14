@@ -115,6 +115,17 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
             throw new Exception("Oddělení se stejným názvem již existuje.");
         }
 
+        if (!model.BuildingId.HasValue)
+        {
+            throw new Exception("Budova musí být vybrána.");
+        }
+
+        var buildingExists = await unitOfWork.BuildingRepository.ExistsByIdAsync(model.BuildingId.Value, ct);
+        if (!buildingExists)
+        {
+            throw new Exception("Vybraná budova neexistuje.");
+        }
+
         var department = mapper.Map<Department>(model);
         department.IsActive = true;
 
@@ -167,6 +178,20 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         if (department.DepartmentName == SystemDepartment.ALL.ToString())
         {
             throw new Exception("Systémové oddělení ALL nelze upravit.");
+        }
+
+        if (!model.BuildingId.HasValue)
+        {
+            throw new Exception("Budova musí být vybrána.");
+        }
+
+        if (model.BuildingId.Value != department.BuildingId)
+        {
+            var buildingExists = await unitOfWork.BuildingRepository.ExistsByIdAsync(model.BuildingId.Value, ct);
+            if (!buildingExists)
+            {
+                throw new Exception("Vybraná budova neexistuje.");
+            }
         }
 
         var existsSameName = await unitOfWork.DepartmentRepository.ExistsAnyWithSameParametersAsync(model.DepartmentName, department.Id, ct);

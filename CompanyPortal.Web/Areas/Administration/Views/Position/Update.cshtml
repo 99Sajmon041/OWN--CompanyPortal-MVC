@@ -1,0 +1,79 @@
+﻿@model PositionUpsertViewModel
+
+@{
+    ViewData["Title"] = "Úprava pozice";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Úprava pozice</h1>
+        <p class="text-muted mb-0">Úprava údajů vybrané pozice.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Detail" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+            <i class="bi bi-eye me-1"></i> Detail
+        </a>
+
+        <a asp-action="List" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Zpět
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 col-xl-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-pencil-square me-2"></i> Údaje pozice
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <form asp-action="Update" method="post">
+
+                    <input asp-for="Id" type="hidden" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3"> 
+                        <label asp-for="PositionName" class="form-label fw-semibold">Název pozice</label>
+                        <input asp-for="PositionName" class="form-control" />
+                        <span asp-validation-for="PositionName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PositionLevel"class="form-label fw-semibold">Úroveň pozice</label>
+                        <select asp-for="PositionLevel"asp-items="@Model.PositionLevels"class="form-select"></select>
+                        <span asp-validation-for="PositionLevel"class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DepartmentId" class="form-label fw-semibold">Oddělení</label>
+                        <select asp-for="DepartmentId"asp-items="@Model.Departments"class="form-select"></select>
+                        <span asp-validation-for="DepartmentId"class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="HourlyRate" class="form-label fw-semibold">Hodinová sazba</label>
+                        <div class="input-group">
+                            <input asp-for="HourlyRate" type="number" class="form-control" min="0" step="0.01" />
+                            <span class="input-group-text">Kč/hod</span>
+                        </div>
+                        <span asp-validation-for="HourlyRate"class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Detail" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                            Zrušit
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i> Uložit změny
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
