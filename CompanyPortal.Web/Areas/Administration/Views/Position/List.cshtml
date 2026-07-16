@@ -35,68 +35,14 @@
 
         <div class="table-responsive scrollable-table-wrapper">
             <table class="table table-hover align-middle mb-0 scrollable-table">
-                <thead class="table-light">
+                <thead class="table-light"> 
                     <tr>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().Id)
-                            <a asp-action="List" asp-route-sortOrder="asc_Id" asp-all-route-data='Context.Request.GetSortRouteValues("desc_Id")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_Id" asp-all-route-data='Context.Request.GetSortRouteValues("asc_Id")' class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().PositionName)
-                            <a asp-action="List" asp-route-sortOrder="asc_PositionName" asp-all-route-data='Context.Request.GetSortRouteValues("desc_PositionName")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_PositionName" asp-all-route-data='Context.Request.GetSortRouteValues("asc_PositionName")' class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().PositionLevel)
-                            <a asp-action="List" asp-route-sortOrder="asc_PositionLevel" asp-all-route-data='Context.Request.GetSortRouteValues("desc_PositionLevel")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_PositionLevel" asp-all-route-data='Context.Request.GetSortRouteValues("asc_PositionLevel")' class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().HourlyRate)
-                            <a asp-action="List" asp-route-sortOrder="asc_HourlyRate" asp-all-route-data='Context.Request.GetSortRouteValues("desc_HourlyRate")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_HourlyRate" asp-all-route-data='Context.Request.GetSortRouteValues("asc_HourlyRate")' class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().IsActive)
-                            <a asp-action="List" asp-route-sortOrder="asc_IsActive" asp-all-route-data='Context.Request.GetSortRouteValues("asc_Id")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_IsActive" asp-all-route-data='Context.Request.GetSortRouteValues("asc_Id")' ´class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(x => x.Items.First().DepartmentName)
-                            <a asp-action="List" asp-route-sortOrder="asc_Department.DepartmentName" asp-all-route-data='Context.Request.GetSortRouteValues("asc_Id")' class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
-                                <i class="bi bi-arrow-up"></i>
-                            </a>
-
-                            <a asp-action="List" asp-route-sortOrder="desc_Department.DepartmentName" asp-all-route-data='Context.Request.GetSortRouteValues("asc_Id")' class="text-decoration-none text-nowrap" title="Seřadit sestupně">
-                                <i class="bi bi-arrow-down"></i>
-                            </a>
-                        </th>
+                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                        <grid-sort property="PositionName" label="@Html.DisplayNameFor(x => x.Items.First().PositionName)" />
+                        <grid-sort property="PositionLevel" label="@Html.DisplayNameFor(x => x.Items.First().PositionLevel)" />
+                        <grid-sort property="HourlyRate" label="@Html.DisplayNameFor(x => x.Items.First().HourlyRate)" />
+                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
+                        <grid-sort property="Department.DepartmentName" label="@Html.DisplayNameFor(x => x.Items.First().DepartmentName)" />
                         <th class="text-end">Akce</th>
                     </tr>
                 </thead>

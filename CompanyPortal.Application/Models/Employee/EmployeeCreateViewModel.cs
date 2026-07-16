@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,9 +20,13 @@ public sealed class EmployeeCreateViewModel
 
     [Required(ErrorMessage = "Uživatel je povinný")]
     public string ApplicationUserId { get; set; } = default!;
+
+    [ValidateNever]
     public List<SelectListItem> ApplicationUsers { get; set; } = [];
 
-    [Range(1, int.MaxValue, ErrorMessage = "Pozice je povinná")]
-    public int PositionId { get; set; }
+    [Required(ErrorMessage = "Pozice je povinná.")]
+    public int? PositionId { get; set; }
+
+    [ValidateNever]
     public List<SelectListItem> Positions { get; set; } = [];
 }

@@ -39,12 +39,12 @@
             <table class="table table-hover align-middle mb-0 scrollable-table">
                 <thead class="table-light">
                     <tr>
-                        <th>ID</th>
-                        <th>Zaměstnanec</th>
-                        <th>Osobní číslo</th>
-                        <th>Pozice</th>
-                        <th>Vytvořen</th>
-                        <th>Stav</th>
+                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                        <grid-sort property="FirstName" label="@Html.DisplayNameFor(x => x.Items.First().FirstName)" />
+                        <grid-sort property="PersonalNumber" label="@Html.DisplayNameFor(x => x.Items.First().PersonalNumber)" />
+                        <grid-sort property="Position.PositionName" label="@Html.DisplayNameFor(x => x.Items.First().PositionName)" />
+                        <grid-sort property="CreatedAt" label="@Html.DisplayNameFor(x => x.Items.First().CreatedAt)" />
+                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
                         <th class="text-end">Akce</th>
                     </tr>
                 </thead>

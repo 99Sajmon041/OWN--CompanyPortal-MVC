@@ -83,16 +83,4 @@ public static class GridRequestBuilder
 
         return gridRequest;
     }
-
-    public static Dictionary<string, string> GetSortRouteValues(this HttpRequest request, string sortOrder)
-    {
-        var routeValues = request
-            .Query
-            .ToDictionary(x => x.Key, x => x.Value.ToString());
-
-        routeValues["sortOrder"] = sortOrder;
-        routeValues["page"] = "1";
-
-        return routeValues;
-    }
 }

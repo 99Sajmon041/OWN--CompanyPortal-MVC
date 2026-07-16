@@ -65,6 +65,7 @@ public sealed class MappingProfile : Profile
 
         CreateMap<Employee, EmployeePositionUpdateViewModel>()
             .ForMember(x => x.EmployeeId, opt => opt.MapFrom(x => x.Id))
+            .ForMember(x => x.CurrentPositionName, opt => opt.MapFrom(x => x.Position.PositionName))
             .ForMember(x => x.Positions, opt => opt.Ignore());
 
         CreateMap<EmployeePositionUpdateViewModel, Employee>()

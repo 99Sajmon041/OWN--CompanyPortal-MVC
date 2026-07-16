@@ -37,11 +37,11 @@
             <table class="table table-hover align-middle mb-0 scrollable-table">
                 <thead class="table-light">
                     <tr>
-                        <th>@Html.DisplayNameFor(x => x.Items.First().Id)</th>
-                        <th>@Html.DisplayNameFor(x => x.Items.First().BuildingName)</th>
-                        <th>@Html.DisplayNameFor(x => x.Items.First().Description)</th>
-                        <th>@Html.DisplayNameFor(x => x.Items.First().Code)</th>
-                        <th>@Html.DisplayNameFor(x => x.Items.First().IsActive)</th>
+                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                        <grid-sort property="BuildingName" label="@Html.DisplayNameFor(x => x.Items.First().BuildingName)" />
+                        <grid-sort property="Description" label="@Html.DisplayNameFor(x => x.Items.First().Description)" />
+                        <grid-sort property="Code" label="@Html.DisplayNameFor(x => x.Items.First().Code)" />
+                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
                         <th class="text-end">Akce</th>
                     </tr>
                 </thead>

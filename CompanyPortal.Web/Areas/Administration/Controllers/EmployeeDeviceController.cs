@@ -30,6 +30,8 @@ public class EmployeeDeviceController(IEmployeeDeviceService employeeDeviceServi
         try
         {
             await employeeDeviceService.AssignDeviceAsync(employeeId, deviceId, note, ct);
+
+            TempData["Success"] = "Zařízení bylo úspěšně zapůjčeno.";
             return RedirectToAction("Detail", "Employee", new { id = employeeId });
         }
         catch (EntityNotFoundException ex)
@@ -47,17 +49,24 @@ public class EmployeeDeviceController(IEmployeeDeviceService employeeDeviceServi
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ReturnDevice(int employeeId, int employeeDeviceId, CancellationToken ct)
+    public async Task<IActionResult> ReturnDevice(int employeeId, int? employeeDeviceId, CancellationToken ct)
     {
         try
         {
-            await employeeDeviceService.MarkAsReturnedAsync(employeeDeviceId, ct);
+            if (!employeeDeviceId.HasValue)
+            {
+                throw new Exception("Zařízení musí být vybráno.");
+            }
+
+            await employeeDeviceService.MarkAsReturnedAsync(employeeDeviceId.Value, ct);
+
+            TempData["Success"] = "Zařízení bylo úspěšně vráceno.";
             return RedirectToAction("Detail", "Employee", new { id = employeeId });
         }
         catch (EntityNotFoundException ex)
         {
             TempData["Error"] = ex.Message;
-            return RedirectToAction("List", "Employee");
+            return RedirectToAction("Employee", "List");
         }
         catch (Exception ex)
         {

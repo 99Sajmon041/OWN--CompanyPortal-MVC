@@ -121,7 +121,12 @@ public sealed class EmployeeService(
 
     public async Task CreateAsync(EmployeeCreateViewModel model, CancellationToken ct)
     {
-        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId, ct);
+        if (model.PositionId is null)
+        {
+            throw new Exception("Pozice je povinná.");
+        }
+
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId.Value, ct);
         if (position is null || !position.IsActive)
         {
             throw new EntityNotFoundException("Zvolená pozice nebyla nalezena nebo není aktivní.");
@@ -134,7 +139,7 @@ public sealed class EmployeeService(
 
         if (position.PositionLevel != PositionLevel.Member)
         {
-            bool exists = await unitOfWork.EmployeeRepository.ExistsActiveEmployeeOnPositionAsync(model.PositionId, ct);
+            bool exists = await unitOfWork.EmployeeRepository.ExistsActiveEmployeeOnPositionAsync(model.PositionId.Value, ct);
 
             if (exists)
             {
@@ -259,6 +264,11 @@ public sealed class EmployeeService(
 
     public async Task UpdatePositionAsync(int id, EmployeePositionUpdateViewModel model, CancellationToken ct)
     {
+        if (!model.PositionId.HasValue)
+        {
+            throw new Exception("Pozice musí být vybrána.");
+        }
+
         if (id != model.EmployeeId)
         {
             throw new EntityNotFoundException("Neplatný identifikátor zaměstnance.");
@@ -270,7 +280,7 @@ public sealed class EmployeeService(
             throw new EntityNotFoundException("Zaměstnanec nebyl nalezen.");
         }
 
-        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId, ct);
+        var position = await unitOfWork.PositionRepository.GetByIdAsync(model.PositionId.Value, ct);
         if (position is null || !position.IsActive)
         {
             throw new Exception("Nově zvolená pozice nebyla nalezena nebo již není aktivní.");

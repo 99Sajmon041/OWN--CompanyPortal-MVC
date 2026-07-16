@@ -49,9 +49,14 @@ public sealed class EmployeeDeviceService(IUnitOfWork unitOfWork, IMapper mapper
 
         return borrowedDevicesVm;
     }
-    public async Task AssignDeviceAsync(int employeeId, int deviceId, string? note, CancellationToken ct)
+    public async Task AssignDeviceAsync(int employeeId, int? deviceId, string? note, CancellationToken ct)
     {
-        var device = await unitOfWork.DeviceRepository.GetWithoutDependenciesAsync(deviceId, ct);
+        if (!deviceId.HasValue)
+        {
+            throw new Exception("Zařízení musí být vybráno.");
+        }
+
+        var device = await unitOfWork.DeviceRepository.GetWithoutDependenciesAsync(deviceId.Value, ct);
         if (device is null)
         {
             throw new EntityNotFoundException("Zařízení nebylo nalezeno.");
@@ -62,7 +67,7 @@ public sealed class EmployeeDeviceService(IUnitOfWork unitOfWork, IMapper mapper
             throw new Exception("Zařízení nelze zapůjčit, je již zastaralé a vyřazené.");
         }
 
-        bool isDeviceBorrowed = await unitOfWork.DeviceRepository.HasAnyActiveBorrowingAsync(deviceId, ct);
+        bool isDeviceBorrowed = await unitOfWork.DeviceRepository.HasAnyActiveBorrowingAsync(deviceId.Value, ct);
         if (isDeviceBorrowed)
         {
             throw new Exception("Zařízení je již vypůjčeno.");
@@ -77,7 +82,7 @@ public sealed class EmployeeDeviceService(IUnitOfWork unitOfWork, IMapper mapper
         var employeeDevice = new EmployeeDevice
         {
             EmployeeId = employeeId,
-            DeviceId = deviceId,
+            DeviceId = deviceId.Value,
             AssignedAt = DateTime.UtcNow,
             Note = note
         };

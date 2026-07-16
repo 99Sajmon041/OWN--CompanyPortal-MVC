@@ -8,8 +8,10 @@ public sealed class EmployeePositionUpdateViewModel
     public int EmployeeId { get; set; }
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
+    public string FullName => $"{FirstName} {LastName}";
+    public string CurrentPositionName { get; set; } = default!;
 
-    [Range(1, int.MaxValue, ErrorMessage = "Pozice je povinná")]
-    public int PositionId { get; set; }
+    [Required(ErrorMessage = "Pozice je povinná.")]
+    public int? PositionId { get; set; }
     public List<SelectListItem> Positions { get; set; } = [];
 }

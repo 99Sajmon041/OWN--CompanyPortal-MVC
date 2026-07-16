@@ -9,6 +9,6 @@ public interface IEmployeeDeviceService
 {
     Task<PagedResult<EmployeeDeviceViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct);
     Task<List<EmployeeDeviceViewModel>> GetBorrowedByEmployeeIdAsync(int employeeId, CancellationToken ct);
-    Task AssignDeviceAsync(int employeeId, int deviceId, string? note, CancellationToken ct);
+    Task AssignDeviceAsync(int employeeId, int? deviceId, string? note, CancellationToken ct);
     Task MarkAsReturnedAsync(int employeeDeviceId, CancellationToken ct);
 }

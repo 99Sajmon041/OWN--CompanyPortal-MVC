@@ -1,0 +1,84 @@
+﻿@model EmployeeCreateViewModel
+
+@{
+    ViewData["Title"] = "Nový zaměstnanec";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Nový zaměstnanec</h1>
+        <p class="text-muted mb-0">Vytvoření nového zaměstnance a propojení s uživatelským účtem.</p>
+    </div>
+
+    <a asp-action="List" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Zpět
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-person-plus me-2"></i> Údaje zaměstnance
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label fw-semibold">Křestní jméno</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Např. Jan" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label fw-semibold">Příjmení</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Např. Novák" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ApplicationUserId" class="form-label fw-semibold">Uživatelský účet</label>
+                        <select asp-for="ApplicationUserId" asp-items="@Model.ApplicationUsers" class="form-select">
+                            <option value="">Vyberte uživatelský účet</option>
+                        </select>
+                        <span asp-validation-for="ApplicationUserId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PositionId" class="form-label fw-semibold">Pozice</label>
+                        <select asp-for="PositionId" asp-items="@Model.Positions" class="form-select">
+                            <option value="">Vyberte pozici</option>
+                        </select>
+                        <span asp-validation-for="PositionId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ImageFile" class="form-label fw-semibold">Fotografie zaměstnance</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                        <div class="form-text">
+                            Vyberte fotografii ve formátu JPG, JPEG, PNG nebo WEBP.
+                        </div>
+                        <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="List" class="btn btn-outline-secondary">
+                            Zrušit
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Vytvořit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

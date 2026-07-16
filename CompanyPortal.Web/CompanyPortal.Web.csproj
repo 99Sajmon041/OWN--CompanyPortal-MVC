@@ -33,6 +33,8 @@
 
   <ItemGroup>
     <Folder Include="Areas\Administration\Views\Device\" />
+    <Folder Include="Areas\Administration\Views\EmployeeDevice\" />
+    <Folder Include="Areas\Administration\Views\ApplicationUser\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

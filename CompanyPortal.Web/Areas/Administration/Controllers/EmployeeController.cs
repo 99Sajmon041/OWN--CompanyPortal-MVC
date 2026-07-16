@@ -102,7 +102,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             model.Positions = result.Positions;
 
             ModelState.AddModelError(string.Empty, ex.Message);
-
+             
             return View(model);
         }
     }
@@ -118,6 +118,11 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             return View(result);
         }
         catch (EntityNotFoundException ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
+        catch (Exception ex)
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
@@ -184,7 +189,7 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             await employeeService.UpdatePositionAsync(id, model, ct);
             TempData["Success"] = "Pozice byla úspěšně upravena.";
 
-            return RedirectToAction(nameof(List));
+            return RedirectToAction(nameof(Detail), new { id });
         }
         catch (EntityNotFoundException ex)
         {
