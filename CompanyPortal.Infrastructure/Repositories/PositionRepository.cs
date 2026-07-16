@@ -20,7 +20,6 @@ public sealed class PositionRepository(CompanyPortalDbContext context) : BaseRep
     public async Task<Position?> GetByIdAsync(int id, CancellationToken ct)
     {
         return await _context.Positions
-            .AsNoTracking()
             .Include(p => p.Department)
             .Include(x => x.Employees)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
