@@ -2,6 +2,16 @@
 
 @{
     ViewData["Title"] = "Detail budovy";
+
+    var activeDepartments = Model.Departments
+    .Where(x => x.IsActive)
+    .OrderBy(x => x.DepartmentName)
+    .ToList();
+
+    var inactiveDepartments = Model.Departments
+        .Where(x => !x.IsActive)
+        .OrderBy(x => x.DepartmentName)
+        .ToList();
 }
 
 <div class="mb-4 d-flex justify-content-between align-items-center">
@@ -72,33 +82,35 @@
 
         </div>
     </div>
-
     <div class="col-lg-7">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-diagram-3 me-2"></i> Oddělení v budově
-                    </h5>
-                    <small class="text-muted">Seznam oddělení přiřazených k této budově.</small>
-                </div>
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-diagram-3 me-2"></i> Oddělení v budově
+                </h5>
 
-                <span class="badge bg-primary">
-                    @Model.Departments.Count
-                </span>
+                <small class="text-muted">
+                    Přehled aktivních a neaktivních oddělení přiřazených k této budově.
+                </small>
             </div>
 
-            <div class="card-body px-4 pb-4">
-                @if (Model.Departments.Any())
-                {
-                    <div class="list-group list-group-flush">
-                        @foreach (var department in Model.Departments.OrderBy(x => x.DepartmentName))
-                        {
-                            <a asp-controller="Department"
-                               asp-action="Detail"
-                               asp-route-id="@department.Id"
-                               class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center">
+            <div class="card-body px-4 pb-4 overflow-auto" style="max-height: 520px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-success mb-0">
+                        <i class="bi bi-check-circle me-1"></i> Aktivní oddělení
+                    </h6>
 
+                    <span class="badge bg-success">
+                        @activeDepartments.Count
+                    </span>
+                </div>
+
+                @if (activeDepartments.Any())
+                {
+                    <div class="list-group list-group-flush mb-4">
+                        @foreach (var department in activeDepartments)
+                        {
+                            <a asp-controller="Department" asp-action="Detail" asp-route-id="@department.Id" class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="fw-semibold">
                                         @department.DepartmentName
@@ -109,28 +121,58 @@
                                     </small>
                                 </div>
 
-                                <div class="d-flex align-items-center gap-2">
-                                    @if (department.IsActive)
-                                    {
-                                        <span class="badge bg-success">Aktivní</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Neaktivní</span>
-                                    }
-
-                                    <i class="bi bi-chevron-right text-muted"></i>
-                                </div>
+                                <i class="bi bi-chevron-right text-muted"></i>
                             </a>
                         }
                     </div>
                 }
                 else
                 {
-                    <div class="text-center py-5">
-                        <i class="bi bi-inbox fs-1 text-muted"></i>
-                        <p class="text-muted mt-3 mb-0">
-                            K této budově zatím není přiřazeno žádné oddělení.
+                    <div class="text-center border rounded py-4 mb-4">
+                        <i class="bi bi-diagram-3 fs-3 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">
+                            K této budově nejsou přiřazena žádná aktivní oddělení.
+                        </p>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-muted mb-0">
+                        <i class="bi bi-x-circle me-1"></i> Neaktivní oddělení
+                    </h6>
+
+                    <span class="badge bg-secondary">
+                        @inactiveDepartments.Count
+                    </span>
+                </div>
+
+                @if (inactiveDepartments.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var department in inactiveDepartments)
+                        {
+                            <a asp-controller="Department" asp-action="Detail" asp-route-id="@department.Id" class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center text-muted">
+                                <div>
+                                    <div class="fw-semibold">
+                                        @department.DepartmentName
+                                    </div>
+
+                                    <small>
+                                        @department.BuildingName
+                                    </small>
+                                </div>
+
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center border rounded py-4">
+                        <i class="bi bi-inbox fs-3 text-muted"></i>
+                        <p class="text-muted mt-2 mb-0">
+                            K této budově nejsou přiřazena žádná neaktivní oddělení.
                         </p>
                     </div>
                 }

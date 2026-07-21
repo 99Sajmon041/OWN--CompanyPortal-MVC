@@ -13,7 +13,7 @@ public sealed class EmployeeDeviceRepository(CompanyPortalDbContext context) : B
     {
         return await _context.EmployeeDevices
             .AsNoTracking()
-            .Where(x => x.EmployeeId == employeeId && x.ReturnedAt == null)
+            .Where(x => x.EmployeeId == employeeId)
             .Include(x => x.Device)
             .ToListAsync(ct);
     }
