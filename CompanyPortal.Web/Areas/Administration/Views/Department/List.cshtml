@@ -76,9 +76,19 @@
 
                                     <form asp-action="ChangeStatus" asp-route-id="@department.Id" method="post" class="d-inline delete-form">
 
-                                        <button type="submit" data-confirm-message="Opravdu chcete oddělení deaktivovat?" class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-toggle-on"></i>
-                                        </button>
+                                        @if (department.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat oddělení" data-confirm-message="Opravdu chcete oddělení deaktivovat?">
+                                                <i class="bi bi-toggle-on"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat oddělení" data-confirm-message="Opravdu chcete oddělení aktivovat?">
+                                                <i class="bi bi-toggle-off"></i>
+                                            </button>
+                                        }
+
                                     </form>
                                 </td>
                             </tr>

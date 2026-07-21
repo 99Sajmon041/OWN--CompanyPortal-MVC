@@ -82,9 +82,18 @@
 
                                     <form asp-action="ChangeStatus" asp-route-id="@position.Id" method="post" class="d-inline delete-form">
 
-                                        <button type="submit" data-confirm-message="Opravdu chcete pozici deaktivovat?" class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-toggle-on"></i>
-                                        </button>
+                                        @if (position.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat pozici" data-confirm-message="Opravdu chcete pozici deaktivovat?">
+                                                <i class="bi bi-toggle-on"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat pozici" data-confirm-message="Opravdu chcete pozici aktivovat?">
+                                                <i class="bi bi-toggle-off"></i>
+                                            </button>
+                                        }
                                     </form>
                                 </td>
                             </tr>
