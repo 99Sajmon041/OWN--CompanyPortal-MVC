@@ -11,7 +11,7 @@ public sealed class Device : IHasId
     public int Id { get; set; }
 
     [FilterOrder(1)]
-    [FilterLabel("Sériové číslo")]
+    [FilterLabel("Sériové číslo zařízení")]
     public string SerialNumber { get; set; } = default!;
 
     [FilterOrder(2)]
