@@ -38,7 +38,7 @@ public sealed class EmployeeDeviceService(IUnitOfWork unitOfWork, IMapper mapper
             Items = items,
             Pager = pager,
             GridRequest = gridRequest,
-            FilterModelType = typeof(Device)
+            FilterModelType = typeof(EmployeeDevice)
         };
     }
 
