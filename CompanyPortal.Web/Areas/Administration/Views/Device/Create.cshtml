@@ -1,0 +1,80 @@
+﻿@model DeviceUpsertViewModel
+
+@{
+    ViewData["Title"] = "Nové zařízení";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Nové zařízení</h1>
+        <p class="text-muted mb-0">Přidání nového firemního zařízení do evidence.</p>
+    </div>
+
+    <a asp-action="List" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Zpět
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-laptop me-2"></i> Údaje zařízení
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <form asp-action="Create" method="post">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SerialNumber" class="form-label fw-semibold">Sériové číslo</label>
+                            <input asp-for="SerialNumber" class="form-control" placeholder="Např. NB-2026-0001" />
+                            <span asp-validation-for="SerialNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DeviceType" class="form-label fw-semibold">Typ zařízení</label>
+                            <select asp-for="DeviceType" asp-items="@Model.DeviceTypes" class="form-select">
+                                <option value="">Vyberte typ zařízení</option>
+                            </select>
+                            <span asp-validation-for="DeviceType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DeviceName" class="form-label fw-semibold">Název zařízení</label>
+                        <input asp-for="DeviceName" class="form-control" placeholder="Např. Dell Latitude 7450" />
+                        <span asp-validation-for="DeviceName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PurchasedAt" class="form-label fw-semibold">Datum pořízení</label>
+                        <input asp-for="PurchasedAt" type="date" class="form-control" />
+                        <span asp-validation-for="PurchasedAt" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Note" class="form-label fw-semibold">Poznámka</label>
+                        <textarea asp-for="Note" class="form-control" rows="4" placeholder="Volitelná poznámka k zařízení"></textarea>
+                        <span asp-validation-for="Note" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="List" class="btn btn-outline-secondary">
+                            Zrušit
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Vytvořit
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

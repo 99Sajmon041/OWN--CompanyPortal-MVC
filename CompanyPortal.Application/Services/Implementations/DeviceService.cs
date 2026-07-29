@@ -10,7 +10,6 @@ using CompanyPortal.Shared.Grid.Common;
 using CompanyPortal.Shared.Grid.Filtering;
 using CompanyPortal.Shared.Grid.Paging;
 using CompanyPortal.Shared.Utilities;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyPortal.Application.Services.Implementations;
@@ -58,7 +57,7 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
         return deviceVm;
     }
 
-    public DeviceUpsertViewModel GetForUpsertAsync()
+    public DeviceUpsertViewModel GetForUpsert()
     {
         var deviceTypes = OptionsBuilder.GetEnumSelectList<DeviceType>();
 
@@ -78,6 +77,11 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
             throw new Exception("Zařízení se stejným sériovým číslem již existuje.");
         }
 
+        if (model.DeviceType is null || !Enum.IsDefined(model.DeviceType.Value))
+        {
+            throw new Exception("Typ zařízení neexistuje, vyberte prosím ze seznamu.");
+        }
+
         var device = mapper.Map<Device>(model);
         device.IsDeprecated = false;
 
@@ -88,24 +92,15 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
     public async Task<DeviceUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct)
     {
         var device = await unitOfWork.DeviceRepository.GetWithoutDependenciesAsync(id, ct);
-        if (device is null)
+        if (device is null || device.IsDeprecated)
         {
-            throw new EntityNotFoundException("Zařízení nebylo nalezeno.");
+            throw new EntityNotFoundException("Zařízení nebylo nalezeno nebo je vyřazené a nelze jej upravit");
         }
 
-        var deviceVm = mapper.Map<DeviceUpsertViewModel>(device);
-        deviceVm.DeviceTypes = OptionsBuilder.GetEnumSelectList<DeviceType>();
+        var model = mapper.Map<DeviceUpsertViewModel>(device);
+        model.DeviceTypes = OptionsBuilder.GetEnumSelectList<DeviceType>();
 
-        foreach (var type in deviceVm.DeviceTypes)
-        {
-            if (type.Value == device.DeviceType.ToString())
-            {
-                type.Selected = true;
-                break;
-            }
-        }
-
-        return deviceVm;
+        return model;
     }
 
     public async Task UpdateAsync(int id, DeviceUpsertViewModel model, CancellationToken ct)
@@ -116,9 +111,10 @@ public sealed class DeviceService(IUnitOfWork unitOfWork, IMapper mapper) : IDev
         }
 
         var device = await unitOfWork.DeviceRepository.GetWithoutDependenciesAsync(id, ct);
-        if (device is null)
+
+        if (device is null || device.IsDeprecated)
         {
-            throw new EntityNotFoundException("Zařízení nebylo nalezeno.");
+            throw new EntityNotFoundException("Zařízení nebylo nalezeno nebo je vyřazené a nelze jej upravit");
         }
 
         var existsWithSameSn = await unitOfWork.DeviceRepository.ExistsAnyWithSameSnAsync(model.SerialNumber, model.Id, ct);

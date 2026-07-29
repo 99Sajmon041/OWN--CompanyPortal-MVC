@@ -65,8 +65,7 @@ public sealed class EmployeeService(
 
         var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
         employeeVm.Roles = roles.ToList();
-        employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct)
-            ?? "Zatím není určen";
+        employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct) ?? "Zatím není určen";
 
         var employeeDevices = await unitOfWork.EmployeeDeviceRepository.GetBorrowedByEmployeeIdAsync(id, ct);
         employeeVm.EmployeeDevices = mapper.Map<List<EmployeeDeviceViewModel>>(employeeDevices);

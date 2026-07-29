@@ -32,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Administration\Views\Device\" />
     <Folder Include="Areas\Administration\Views\ApplicationUser\" />
   </ItemGroup>
 

@@ -9,7 +9,7 @@ public interface IDeviceService
 {
     Task<PagedResult<DeviceListItemViewModel>> GetAllPagedAsync(GridRequest gridRequest, CancellationToken ct);
     Task<DeviceDetailViewModel> GetDetailAsync(int id, CancellationToken ct);
-    DeviceUpsertViewModel GetForUpsertAsync();
+    DeviceUpsertViewModel GetForUpsert();
     Task CreateAsync(DeviceUpsertViewModel model, CancellationToken ct);
     Task<DeviceUpsertViewModel> GetForUpdateAsync(int id, CancellationToken ct);
     Task UpdateAsync(int id, DeviceUpsertViewModel model, CancellationToken ct);

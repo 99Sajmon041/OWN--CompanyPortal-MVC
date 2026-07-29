@@ -43,7 +43,7 @@ public sealed class DeviceController(IDeviceService deviceService) : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var result = deviceService.GetForUpsertAsync();
+        var result = deviceService.GetForUpsert();
         return View(result);
     }
 
@@ -54,22 +54,22 @@ public sealed class DeviceController(IDeviceService deviceService) : Controller
     {
         if (!ModelState.IsValid)
         {
-            var result = deviceService.GetForUpsertAsync();
-            model.DeviceTypes = result.DeviceTypes;
-
+            model.DeviceTypes = deviceService.GetForUpsert().DeviceTypes;
             return View(model);
         }
 
         try
         {
             await deviceService.CreateAsync(model, ct);
-            TempData["Success"] = "Vytvoření zařízení proběhlo úspěšně.";
 
+            TempData["Success"] = "Vytvoření zařízení proběhlo úspěšně.";
             return RedirectToAction(nameof(List));
         }
         catch (Exception ex)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
+            model.DeviceTypes = deviceService.GetForUpsert().DeviceTypes;
+
             return View(model);
         }
     }
@@ -88,6 +88,11 @@ public sealed class DeviceController(IDeviceService deviceService) : Controller
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
     }
 
 
@@ -97,7 +102,7 @@ public sealed class DeviceController(IDeviceService deviceService) : Controller
     {
         if (!ModelState.IsValid)
         {
-            var result = deviceService.GetForUpsertAsync();
+            var result = deviceService.GetForUpsert();
             model.DeviceTypes = result.DeviceTypes;
 
             return View(model);
@@ -118,6 +123,10 @@ public sealed class DeviceController(IDeviceService deviceService) : Controller
         catch (Exception ex)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
+
+            var result = deviceService.GetForUpsert();
+            model.DeviceTypes = result.DeviceTypes;
+
             return View(model);
         }
     }

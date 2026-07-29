@@ -6,7 +6,6 @@ namespace CompanyPortal.Application.Models.Employee;
 public sealed class EmployeeUpdateViewModel
 {
     public int Id { get; set; }
-    public string PersonalNumber { get; set; } = default!;
 
     [Required(ErrorMessage = "Křestní jméno je povinné.")]
     [StringLength(50, ErrorMessage = "Křestní jméno musí mít 2 - 50 znaků", MinimumLength = 2)]

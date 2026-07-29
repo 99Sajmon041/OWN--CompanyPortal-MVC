@@ -152,6 +152,11 @@ public sealed class EmployeeController(IEmployeeService employeeService) : Contr
             TempData["Error"] = ex.Message;
             return RedirectToAction(nameof(List));
         }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(List));
+        }
     }
 
     [HttpGet]
