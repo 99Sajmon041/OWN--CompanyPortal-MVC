@@ -1,0 +1,183 @@
+﻿@model ApplicationUserViewModel
+
+@{
+    ViewData["Title"] = "Detail uživatelského účtu";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">@Model.UserName</h1>
+        <p class="text-muted mb-0">
+            Detail uživatelského účtu a jeho přístupových údajů.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil-square me-1"></i> Upravit
+        </a>
+
+        <a asp-action="List" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Seznam
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-person-vcard me-2"></i>
+                    Informace o uživateli
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5 text-muted">
+                        ID uživatele
+                    </dt>
+                    <dd class="col-sm-7 fw-semibold text-break">
+                        @Model.Id
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">
+                        Uživatelské jméno
+                    </dt>
+                    <dd class="col-sm-7 fw-semibold">
+                        @Model.UserName
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">
+                        E-mail
+                    </dt>
+                    <dd class="col-sm-7">
+                        @if (!string.IsNullOrWhiteSpace(Model.Email))
+                        {
+                            <a href="mailto:@Model.Email" class="text-decoration-none">
+                                <i class="bi bi-envelope me-1"></i>
+                                @Model.Email
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Není uveden</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">
+                        Doménový účet
+                    </dt>
+                    <dd class="col-sm-7 fw-semibold">
+                        @if (!string.IsNullOrWhiteSpace(Model.DomainUserName))
+                        {
+                            <span class="font-monospace">@Model.DomainUserName</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Není uveden</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">
+                        Datum vytvoření
+                    </dt>
+                    <dd class="col-sm-7 fw-semibold">
+                        @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                    </dd>
+
+                    <dt class="col-sm-5 text-muted">
+                        Platnost přístupu
+                    </dt>
+                    <dd class="col-sm-7">
+                        @if (Model.AccessValidUntil is null)
+                        {
+                            <span class="text-muted">Bez omezení</span>
+                        }
+                        else if (Model.AccessValidUntil <= DateTime.UtcNow)
+                        {
+                            <span class="badge bg-danger">
+                                <i class="bi bi-calendar-x me-1"></i>
+                                Platnost skončila @Model.AccessValidUntil.Value.ToString("dd.MM.yyyy HH:mm")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-calendar-check me-1"></i>
+                                Platný do @Model.AccessValidUntil.Value.ToString("dd.MM.yyyy HH:mm")
+                            </span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Stav účtu
+                </h5>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <div class="mb-4">
+                    <div class="text-muted mb-2">Stav uživatelského účtu</div>
+
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success fs-6">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Aktivní
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger fs-6">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Neaktivní
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <div class="text-muted mb-2">Zaměstnanecký profil</div>
+
+                    @if (Model.IsEmployeeProfileCompleted)
+                    {
+                        <span class="badge bg-success fs-6">
+                            <i class="bi bi-person-check me-1"></i>
+                            Profil je dokončen
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark fs-6">
+                            <i class="bi bi-person-exclamation me-1"></i>
+                            Profil není dokončen
+                        </span>
+                    }
+                </div>
+
+                @if (!Model.IsActive)
+                {
+                    <div class="alert alert-danger mt-4 mb-0">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        Tento uživatelský účet není aktivní a uživatel se nemůže přihlásit.
+                    </div>
+                }
+                else if (Model.AccessValidUntil is not null && Model.AccessValidUntil <= DateTime.UtcNow)
+                {
+                    <div class="alert alert-warning mt-4 mb-0">
+                        <i class="bi bi-clock-history me-1"></i>
+                        Přístup uživatele již není platný.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
