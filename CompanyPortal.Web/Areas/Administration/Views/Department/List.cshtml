@@ -28,82 +28,84 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
+        <div class="scrollable-table-container">
 
-        <div class="scrollable-table-top">
-            <div class="scrollable-table-top-inner"></div>
-        </div>
+            <div class="scrollable-table-top">
+                <div class="scrollable-table-top-inner"></div>
+            </div>
 
-        <div class="table-responsive scrollable-table-wrapper">
-            <table class="table table-hover align-middle mb-0 scrollable-table">
-                <thead class="table-light">
-                    <tr>
-                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                        <grid-sort property="DepartmentName" label="@Html.DisplayNameFor(x => x.Items.First().DepartmentName)" />
-                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
-                        <grid-sort property="Building.BuildingName" label="@Html.DisplayNameFor(x => x.Items.First().BuildingName)" />
-                        <th class="text-end">Akce</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Items.Any())
-                    {
-                        @foreach (var department in Model.Items)
+            <div class="scrollable-table-wrapper">
+                <table class="table table-hover align-middle mb-0 scrollable-table">
+                    <thead class="table-light">
+                        <tr>
+                            <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                            <grid-sort property="DepartmentName" label="@Html.DisplayNameFor(x => x.Items.First().DepartmentName)" />
+                            <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
+                            <grid-sort property="Building.BuildingName" label="@Html.DisplayNameFor(x => x.Items.First().BuildingName)" />
+                            <th class="text-end">Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Items.Any())
                         {
-                            <tr>
-                                <td class="text-muted">@department.Id</td>
-                                <td class="fw-semibold">@department.DepartmentName</td>
-                                <td>
-                                    @if (department.IsActive)
-                                    {
-                                        <span class="badge bg-success">Aktivní</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Neaktivní</span>
-                                    }
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary">@department.BuildingName</span>
-                                </td>
-                                <td class="text-end">
-                                    <a asp-action="Detail" asp-route-id="@department.Id" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-
-                                    <a asp-action="Update" asp-route-id="@department.Id" class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <form asp-action="ChangeStatus" asp-route-id="@department.Id" method="post" class="d-inline delete-form">
-
+                            @foreach (var department in Model.Items)
+                            {
+                                <tr>
+                                    <td class="text-muted">@department.Id</td>
+                                    <td class="fw-semibold">@department.DepartmentName</td>
+                                    <td>
                                         @if (department.IsActive)
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat oddělení" data-confirm-message="Opravdu chcete oddělení deaktivovat?">
-                                                <i class="bi bi-toggle-on"></i>
-                                            </button>
+                                            <span class="badge bg-success">Aktivní</span>
                                         }
                                         else
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat oddělení" data-confirm-message="Opravdu chcete oddělení aktivovat?">
-                                                <i class="bi bi-toggle-off"></i>
-                                            </button>
+                                            <span class="badge bg-danger">Neaktivní</span>
                                         }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@department.BuildingName</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Detail" asp-route-id="@department.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
 
-                                    </form>
+                                        <a asp-action="Update" asp-route-id="@department.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form asp-action="ChangeStatus" asp-route-id="@department.Id" method="post" class="d-inline delete-form">
+
+                                            @if (department.IsActive)
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat oddělení" data-confirm-message="Opravdu chcete oddělení deaktivovat?">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat oddělení" data-confirm-message="Opravdu chcete oddělení aktivovat?">
+                                                    <i class="bi bi-toggle-off"></i>
+                                                </button>
+                                            }
+
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Nebyly nalezeny žádné oddělení.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                Nebyly nalezeny žádné oddělení.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

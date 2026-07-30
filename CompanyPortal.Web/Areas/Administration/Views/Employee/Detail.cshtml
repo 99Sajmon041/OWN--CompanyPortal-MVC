@@ -210,7 +210,7 @@
     <div class="card-body px-4 pb-4">
         @if (availableDevices.Any())
         {
-            <form asp-action="AssignDevice" method="post" class="mb-4">
+            <form asp-controller="EmployeeDevice" asp-action="AssignDevice" method="post" class="mb-4">
                 <input type="hidden" name="employeeId" value="@Model.Id" />
 
                 <div class="row g-2 align-items-end">
@@ -220,6 +220,12 @@
                         <select id="deviceId" name="deviceId" asp-items="availableDevices" class="form-select" required>
                             <option value="">Vyberte zařízení</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-8 col-lg-6">
+                        <label for="note" class="form-label fw-semibold">Poznámka</label>
+
+                        <input id="note" name="note" placeholder="Zadejte poznámku" class="form-control" />
                     </div>
 
                     <div class="col-md-auto">
@@ -285,7 +291,7 @@
                                 </td>
 
                                 <td class="text-end">
-                                    <form asp-action="ReturnDevice" method="post" class="d-inline delete-form">
+                                    <form asp-controller="EmployeeDevice" asp-action="ReturnDevice" method="post" class="d-inline delete-form">
                                         <input type="hidden" name="employeeDeviceId" value="@employeeDevice.Id" />
                                         <input type="hidden" name="employeeId" value="@Model.Id" />
 

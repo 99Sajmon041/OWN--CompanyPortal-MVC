@@ -124,28 +124,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Fake table horizontal scroll script
 document.addEventListener("DOMContentLoaded", function () {
-    const topScroll = document.querySelector(".scrollable-table-top");
-    const topScrollInner = document.querySelector(".scrollable-table-top-inner");
-    const tableWrapper = document.querySelector(".scrollable-table-wrapper");
-    const table = document.querySelector(".scrollable-table");
+    const containers = document.querySelectorAll(".scrollable-table-container");
 
-    if (!topScroll || !topScrollInner || !tableWrapper || !table) {
-        return;
-    }
+    containers.forEach(function (container) {
+        const topScroll = container.querySelector(".scrollable-table-top");
+        const topScrollInner = container.querySelector(".scrollable-table-top-inner");
+        const tableWrapper = container.querySelector(".scrollable-table-wrapper");
+        const table = container.querySelector(".scrollable-table");
 
-    function syncScrollWidth() {
-        topScrollInner.style.width = table.scrollWidth + "px";
-    }
+        if (!topScroll || !topScrollInner || !tableWrapper || !table) {
+            return;
+        }
 
-    syncScrollWidth();
+        function updateTopScrollbar() {
+            topScrollInner.style.width = table.scrollWidth + "px";
+            topScroll.style.display = table.scrollWidth > tableWrapper.clientWidth ? "block" : "none";
+        }
 
-    topScroll.addEventListener("scroll", function () {
-        tableWrapper.scrollLeft = topScroll.scrollLeft;
+        updateTopScrollbar();
+
+        topScroll.addEventListener("scroll", function () {
+            tableWrapper.scrollLeft = topScroll.scrollLeft;
+        });
+
+        tableWrapper.addEventListener("scroll", function () {
+            topScroll.scrollLeft = tableWrapper.scrollLeft;
+        });
+
+        window.addEventListener("resize", updateTopScrollbar);
+
+        if (typeof ResizeObserver !== "undefined") {
+            const resizeObserver = new ResizeObserver(updateTopScrollbar);
+            resizeObserver.observe(table);
+            resizeObserver.observe(tableWrapper);
+        }
     });
-
-    tableWrapper.addEventListener("scroll", function () {
-        topScroll.scrollLeft = tableWrapper.scrollLeft;
-    });
-
-    window.addEventListener("resize", syncScrollWidth);
 });

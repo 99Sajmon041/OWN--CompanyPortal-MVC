@@ -1,7 +1,7 @@
 ﻿using CompanyPortal.Shared.Grid.Paging;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CompanyPortal.Web.ViewComponents;
+namespace CompanyPortal.Web.Views.ViewComponents;
 
 public class PagerViewComponent : ViewComponent
 {

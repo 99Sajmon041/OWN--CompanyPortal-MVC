@@ -1,0 +1,141 @@
+﻿@model PagedResult<ApplicationUserViewModel>
+
+@{
+    ViewData["Title"] = "Uživatelské účty";
+}
+
+@await Component.InvokeAsync("GridFilters", new GridFiltersComponentModel
+{
+    ModelType = Model.FilterModelType!,
+    Filters = Model.GridRequest.Filters,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    PageSize = Model.GridRequest.PageSize,
+    SortOrder = Model.GridRequest.SortOrder,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})
+
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="fw-bold mb-1">Uživatelské účty</h1>
+        <p class="text-muted mb-0">Správa uživatelských účtů systému.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="scrollable-table-container">
+
+            <div class="scrollable-table-top">
+                <div class="scrollable-table-top-inner"></div>
+            </div>
+
+            <div class="scrollable-table-wrapper">
+                <table class="table table-hover align-middle mb-0 scrollable-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="grid-sort" data-sort="Id">ID</th>
+                            <th class="grid-sort" data-sort="UserName">Uživatelské jméno</th>
+                            <th class="grid-sort" data-sort="Email">E-mail</th>
+                            <th class="grid-sort" data-sort="DomainUserName">Doménový účet</th>
+                            <th class="grid-sort text-center" data-sort="IsEmployeeProfileCompleted">Profil</th>
+                            <th class="grid-sort text-center" data-sort="IsActive">Aktivní</th>
+                            <th class="grid-sort" data-sort="AccessValidUntil">Platnost přístupu</th>
+                            <th class="grid-sort" data-sort="CreatedAt">Vytvořeno</th>
+                            <th class="text-end">Akce</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.Items.Any())
+                        {
+                            @foreach (var user in Model.Items)
+                            {
+                                <tr>
+                                    <td>@user.Id</td>
+
+                                    <td class="fw-semibold">
+                                        @user.UserName
+                                    </td>
+
+                                    <td>
+                                        @user.Email
+                                    </td>
+
+                                    <td>
+                                        @user.DomainUserName
+                                    </td>
+
+                                    <td class="text-center">
+                                        @if (user.IsEmployeeProfileCompleted)
+                                        {
+                                            <span class="badge bg-success">Ano</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Ne</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success">Aktivní</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Neaktivní</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @(user.AccessValidUntil?.ToString("dd.MM.yyyy") ?? "-")
+                                    </td>
+
+                                    <td>
+                                        @user.CreatedAt.ToString("dd.MM.yyyy")
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a asp-action="Detail"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Detail uživatele">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a asp-action="Update"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-outline-secondary"
+                                           title="Upravit uživatele">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">
+                                    Nebyly nalezeny žádné uživatelské účty.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Component.InvokeAsync("Pager", new PagerPartialViewModel
+{
+    Pager = Model.Pager,
+    Action = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty,
+    Controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+    SortOrder = Model.GridRequest.SortOrder,
+    PageSize = Model.GridRequest.PageSize,
+    Filters = Model.GridRequest.Filters,
+    FiltersCollapsed = Model.GridRequest.FiltersCollapsed
+})

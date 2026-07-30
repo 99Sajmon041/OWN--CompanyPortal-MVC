@@ -31,10 +31,6 @@
     <ProjectReference Include="..\CompanyPortal.Shared\CompanyPortal.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Administration\Views\ApplicationUser\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

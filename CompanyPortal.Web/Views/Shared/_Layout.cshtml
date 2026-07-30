@@ -77,18 +77,19 @@
             </ul>
         </aside>
 
-        <div class="flex-grow-1 d-flex flex-column min-vh-100">
+        <div class="flex-grow-1 d-flex flex-column min-vh-100" style="min-width: 0;">
             <header class="border-bottom bg-white shadow-sm">
                 <div class="container-fluid py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">@ViewData["Title"]</h5>
+
                     <span class="text-muted">
                         <i class="bi bi-person-circle"></i> @User.Identity?.Name
                     </span>
                 </div>
             </header>
 
-            <main class="container-fluid p-4 flex-grow-1">
-                <div class="mx-auto" style="max-width: 1400px;">
+            <main class="container-fluid p-4 flex-grow-1" style="min-width: 0;">
+                <div class="mx-auto w-100" style="max-width: 1400px; min-width: 0;">
                     <partial name="_Alerts" />
 
                     @RenderBody()
@@ -103,10 +104,8 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/companyportal-theme/js/bootstrap.bundle.min.js"></script>
-
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
-
     <script src="~/lib/companyportal-theme/js/main.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

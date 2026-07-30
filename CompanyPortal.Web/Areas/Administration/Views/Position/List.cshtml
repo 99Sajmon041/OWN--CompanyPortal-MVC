@@ -28,87 +28,121 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
+        <div class="scrollable-table-container">
 
-        <div class="scrollable-table-top">
-            <div class="scrollable-table-top-inner"></div>
-        </div>
+            <div class="scrollable-table-top">
+                <div class="scrollable-table-top-inner"></div>
+            </div>
 
-        <div class="table-responsive scrollable-table-wrapper">
-            <table class="table table-hover align-middle mb-0 scrollable-table">
-                <thead class="table-light"> 
-                    <tr>
-                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                        <grid-sort property="PositionName" label="@Html.DisplayNameFor(x => x.Items.First().PositionName)" />
-                        <grid-sort property="PositionLevel" label="@Html.DisplayNameFor(x => x.Items.First().PositionLevel)" />
-                        <grid-sort property="HourlyRate" label="@Html.DisplayNameFor(x => x.Items.First().HourlyRate)" />
-                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
-                        <grid-sort property="Department.DepartmentName" label="@Html.DisplayNameFor(x => x.Items.First().DepartmentName)" />
-                        <th class="text-end">Akce</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Items.Any())
-                    {
-                        @foreach (var position in Model.Items)
+            <div class="scrollable-table-wrapper">
+                <table class="table table-hover align-middle mb-0 scrollable-table">
+                    <thead class="table-light">
+                        <tr>
+                            <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                            <grid-sort property="PositionName" label="@Html.DisplayNameFor(x => x.Items.First().PositionName)" />
+                            <grid-sort property="PositionLevel" label="@Html.DisplayNameFor(x => x.Items.First().PositionLevel)" />
+                            <grid-sort property="HourlyRate" label="@Html.DisplayNameFor(x => x.Items.First().HourlyRate)" />
+                            <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
+                            <grid-sort property="Department.DepartmentName" label="@Html.DisplayNameFor(x => x.Items.First().DepartmentName)" />
+                            <th class="text-end">Akce</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.Items.Any())
                         {
-                            <tr>
-                                <td class="text-muted">@Html.DisplayFor(modelItem => position.Id)</td>
-                                <td class="fw-semibold">@Html.DisplayFor(modelItem => position.PositionName)</td>
-                                <td>
-                                    <span class="badge bg-primary">@Html.DisplayFor(modelItem => position.PositionLevel)</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary">@position.HourlyRate.ToString("C")</span>
-                                </td>
-                                <td>
-                                    @if (position.IsActive)
-                                    {
-                                        <span class="badge bg-success">Aktivní</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Neaktivní</span>
-                                    }
-                                </td>
-                                <td class="fw-semibold">@Html.DisplayFor(modelItem => position.DepartmentName)</td>
-                                <td class="text-end">
-                                    <a asp-action="Detail" asp-route-id="@position.Id" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
+                            @foreach (var position in Model.Items)
+                            {
+                                <tr>
+                                    <td class="text-muted">
+                                        @Html.DisplayFor(modelItem => position.Id)
+                                    </td>
 
-                                    <a asp-action="Update" asp-route-id="@position.Id" class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                    <td class="fw-semibold">
+                                        @Html.DisplayFor(modelItem => position.PositionName)
+                                    </td>
 
-                                    <form asp-action="ChangeStatus" asp-route-id="@position.Id" method="post" class="d-inline delete-form">
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            @Html.DisplayFor(modelItem => position.PositionLevel)
+                                        </span>
+                                    </td>
 
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            @position.HourlyRate.ToString("C")
+                                        </span>
+                                    </td>
+
+                                    <td>
                                         @if (position.IsActive)
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat pozici" data-confirm-message="Opravdu chcete pozici deaktivovat?">
-                                                <i class="bi bi-toggle-on"></i>
-                                            </button>
+                                            <span class="badge bg-success">Aktivní</span>
                                         }
                                         else
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat pozici" data-confirm-message="Opravdu chcete pozici aktivovat?">
-                                                <i class="bi bi-toggle-off"></i>
-                                            </button>
+                                            <span class="badge bg-danger">Neaktivní</span>
                                         }
-                                    </form>
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        @Html.DisplayFor(modelItem => position.DepartmentName)
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a asp-action="Detail"
+                                           asp-route-id="@position.Id"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Detail pozice">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a asp-action="Update"
+                                           asp-route-id="@position.Id"
+                                           class="btn btn-sm btn-outline-secondary"
+                                           title="Upravit pozici">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form asp-action="ChangeStatus"
+                                              asp-route-id="@position.Id"
+                                              method="post"
+                                              class="d-inline delete-form">
+
+                                            @if (position.IsActive)
+                                            {
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-warning"
+                                                        title="Deaktivovat pozici"
+                                                        data-confirm-message="Opravdu chcete pozici deaktivovat?">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-success"
+                                                        title="Aktivovat pozici"
+                                                        data-confirm-message="Opravdu chcete pozici aktivovat?">
+                                                    <i class="bi bi-toggle-off"></i>
+                                                </button>
+                                            }
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    Nebyly nalezeny žádné pozice.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                Nebyly nalezeny žádné pozice.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

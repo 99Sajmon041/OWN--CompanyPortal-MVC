@@ -28,116 +28,118 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
+        <div class="scrollable-table-container">
 
-        <div class="scrollable-table-top">
-            <div class="scrollable-table-top-inner"></div>
-        </div>
+            <div class="scrollable-table-top">
+                <div class="scrollable-table-top-inner"></div>
+            </div>
 
-        <div class="table-responsive scrollable-table-wrapper">
-            <table class="table table-hover align-middle mb-0 scrollable-table">
-                <thead class="table-light">
-                    <tr>
-                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                        <grid-sort property="SerialNumber" label="@Html.DisplayNameFor(x => x.Items.First().SerialNumber)" />
-                        <grid-sort property="DeviceName" label="@Html.DisplayNameFor(x => x.Items.First().DeviceName)" />
-                        <grid-sort property="DeviceType" label="@Html.DisplayNameFor(x => x.Items.First().DeviceType)" />
-                        <grid-sort property="PurchasedAt" label="@Html.DisplayNameFor(x => x.Items.First().PurchasedAt)" />
-                        <grid-sort property="IsDeprecated" label="@Html.DisplayNameFor(x => x.Items.First().IsDeprecated)" />
-                        <th>Poznámka</th>
-                        <th class="text-end">Akce</th>
-                    </tr>
-                </thead>
+            <div class="scrollable-table-wrapper">
+                <table class="table table-hover align-middle mb-0 scrollable-table">
+                    <thead class="table-light">
+                        <tr>
+                            <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                            <grid-sort property="SerialNumber" label="@Html.DisplayNameFor(x => x.Items.First().SerialNumber)" />
+                            <grid-sort property="DeviceName" label="@Html.DisplayNameFor(x => x.Items.First().DeviceName)" />
+                            <grid-sort property="DeviceType" label="@Html.DisplayNameFor(x => x.Items.First().DeviceType)" />
+                            <grid-sort property="PurchasedAt" label="@Html.DisplayNameFor(x => x.Items.First().PurchasedAt)" />
+                            <grid-sort property="IsDeprecated" label="@Html.DisplayNameFor(x => x.Items.First().IsDeprecated)" />
+                            <th>Poznámka</th>
+                            <th class="text-end">Akce</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @if (Model.Items.Any())
-                    {
-                        @foreach (var device in Model.Items)
+                    <tbody>
+                        @if (Model.Items.Any())
                         {
-                            <tr>
-                                <td class="text-muted">@device.Id</td>
+                            @foreach (var device in Model.Items)
+                            {
+                                <tr>
+                                    <td class="text-muted">@device.Id</td>
 
-                                <td>
-                                    <span class="font-monospace fw-semibold">@device.SerialNumber</span>
-                                </td>
+                                    <td>
+                                        <span class="font-monospace fw-semibold">@device.SerialNumber</span>
+                                    </td>
 
-                                <td class="fw-semibold">@device.DeviceName</td>
+                                    <td class="fw-semibold">@device.DeviceName</td>
 
-                                <td>
-                                    <span class="badge bg-secondary">@device.DeviceType</span>
-                                </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@device.DeviceType</span>
+                                    </td>
 
-                                <td>@device.PurchasedAt.ToString("dd.MM.yyyy")</td>
+                                    <td>@device.PurchasedAt.ToString("dd.MM.yyyy")</td>
 
-                                <td>
-                                    @if (device.IsDeprecated)
-                                    {
-                                        <span class="badge bg-danger">Vyřazené</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">Aktivní</span>
-                                    }
-                                </td>
-
-                                <td>
-                                    @if (string.IsNullOrWhiteSpace(device.Note))
-                                    {
-                                        <span class="text-muted">—</span>
-                                    }
-                                    else
-                                    {
-                                        <span title="@device.Note">
-                                            @(device.Note.Length > 50 ? $"{device.Note[..50]}..." : device.Note)
-                                        </span>
-                                    }
-                                </td>
-
-                                <td class="text-end">
-                                    <a asp-action="Detail" asp-route-id="@device.Id" class="btn btn-sm btn-outline-primary" title="Detail zařízení">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-
-                                    @if (!device.IsDeprecated)
-                                    {
-                                        <a asp-action="Update" asp-route-id="@device.Id" class="btn btn-sm btn-outline-secondary" title="Upravit zařízení">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" title="Vyřazené zařízení nelze upravit" disabled>
-                                            <i class="bi bi-lock-fill"></i>
-                                        </button>
-                                    }
-
-                                    <form asp-action="Deprecate" asp-route-id="@device.Id" method="post" class="d-inline delete-form">
-                                        @if (!device.IsDeprecated)
+                                    <td>
+                                        @if (device.IsDeprecated)
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Vyřadit zařízení" data-confirm-message="Opravdu chcete zařízení vyřadit? Tato operace je nevratná.">
-                                                <i class="bi bi-toggle-on"></i>
-                                            </button>
+                                            <span class="badge bg-danger">Vyřazené</span>
                                         }
                                         else
                                         {
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Zařízení je trvale vyřazeno" disabled>
-                                                <i class="bi bi-archive-fill"></i>
+                                            <span class="badge bg-success">Aktivní</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(device.Note))
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                        else
+                                        {
+                                            <span title="@device.Note">
+                                                @(device.Note.Length > 50 ? $"{device.Note[..50]}..." : device.Note)
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a asp-action="Detail" asp-route-id="@device.Id" class="btn btn-sm btn-outline-primary" title="Detail zařízení">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        @if (!device.IsDeprecated)
+                                        {
+                                            <a asp-action="Update" asp-route-id="@device.Id" class="btn btn-sm btn-outline-secondary" title="Upravit zařízení">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Vyřazené zařízení nelze upravit" disabled>
+                                                <i class="bi bi-lock-fill"></i>
                                             </button>
                                         }
-                                    </form>
+
+                                        <form asp-action="Deprecate" asp-route-id="@device.Id" method="post" class="d-inline delete-form">
+                                            @if (!device.IsDeprecated)
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Vyřadit zařízení" data-confirm-message="Opravdu chcete zařízení vyřadit? Tato operace je nevratná.">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" title="Zařízení je trvale vyřazeno" disabled>
+                                                    <i class="bi bi-archive-fill"></i>
+                                                </button>
+                                            }
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    Nebyla nalezena žádná zařízení.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                Nebyla nalezena žádná zařízení.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

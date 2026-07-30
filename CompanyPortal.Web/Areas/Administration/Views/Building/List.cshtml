@@ -28,84 +28,86 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
+        <div class="scrollable-table-container">
 
-        <div class="scrollable-table-top">
-            <div class="scrollable-table-top-inner"></div>
-        </div>
+            <div class="scrollable-table-top">
+                <div class="scrollable-table-top-inner"></div>
+            </div>
 
-        <div class="table-responsive scrollable-table-wrapper">
-            <table class="table table-hover align-middle mb-0 scrollable-table">
-                <thead class="table-light">
-                    <tr>
-                        <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                        <grid-sort property="BuildingName" label="@Html.DisplayNameFor(x => x.Items.First().BuildingName)" />
-                        <grid-sort property="Description" label="@Html.DisplayNameFor(x => x.Items.First().Description)" />
-                        <grid-sort property="Code" label="@Html.DisplayNameFor(x => x.Items.First().Code)" />
-                        <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
-                        <th class="text-end">Akce</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Items.Any())
-                    {
-                        @foreach (var building in Model.Items)
+            <div class="scrollable-table-wrapper">
+                <table class="table table-hover align-middle mb-0 scrollable-table">
+                    <thead class="table-light">
+                        <tr>
+                            <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                            <grid-sort property="BuildingName" label="@Html.DisplayNameFor(x => x.Items.First().BuildingName)" />
+                            <grid-sort property="Description" label="@Html.DisplayNameFor(x => x.Items.First().Description)" />
+                            <grid-sort property="Code" label="@Html.DisplayNameFor(x => x.Items.First().Code)" />
+                            <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
+                            <th class="text-end">Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Items.Any())
                         {
-                            <tr>
-                                <td class="text-muted">@building.Id</td>
-                                <td class="fw-semibold">@building.BuildingName</td>
-                                <td>@(building.Description ?? "-")</td>
-                                <td>
-                                    <span class="badge bg-secondary">@building.Code</span>
-                                </td>
-                                <td>
-                                    @if (building.IsActive)
-                                    {
-                                        <span class="badge bg-success">Aktivní</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger">Neaktivní</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    <a asp-action="Detail" asp-route-id="@building.Id" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-
-                                    <a asp-action="Update" asp-route-id="@building.Id" class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <form asp-action="ChangeStatus" asp-route-id="@building.Id" method="post" class="d-inline delete-form">
-
+                            @foreach (var building in Model.Items)
+                            {
+                                <tr>
+                                    <td class="text-muted">@building.Id</td>
+                                    <td class="fw-semibold">@building.BuildingName</td>
+                                    <td>@(building.Description ?? "-")</td>
+                                    <td>
+                                        <span class="badge bg-secondary">@building.Code</span>
+                                    </td>
+                                    <td>
                                         @if (building.IsActive)
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat budovu" data-confirm-message="Opravdu chcete budovu deaktivovat?">
-                                                <i class="bi bi-toggle-on"></i>
-                                            </button>
+                                            <span class="badge bg-success">Aktivní</span>
                                         }
                                         else
                                         {
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat budovu" data-confirm-message="Opravdu chcete budovu aktivovat?">
-                                                <i class="bi bi-toggle-off"></i>
-                                            </button>
+                                            <span class="badge bg-danger">Neaktivní</span>
                                         }
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Detail" asp-route-id="@building.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
 
-                                    </form>
+                                        <a asp-action="Update" asp-route-id="@building.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form asp-action="ChangeStatus" asp-route-id="@building.Id" method="post" class="d-inline delete-form">
+
+                                            @if (building.IsActive)
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Deaktivovat budovu" data-confirm-message="Opravdu chcete budovu deaktivovat?">
+                                                    <i class="bi bi-toggle-on"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Aktivovat budovu" data-confirm-message="Opravdu chcete budovu aktivovat?">
+                                                    <i class="bi bi-toggle-off"></i>
+                                                </button>
+                                            }
+
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Nebyly nalezeny žádné budovy.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                Nebyly nalezeny žádné budovy.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
