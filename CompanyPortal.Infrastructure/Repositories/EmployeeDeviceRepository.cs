@@ -15,6 +15,7 @@ public sealed class EmployeeDeviceRepository(CompanyPortalDbContext context) : B
             .AsNoTracking()
             .Where(x => x.EmployeeId == employeeId)
             .Include(x => x.Device)
+            .Include(x => x.Employee)
             .ToListAsync(ct);
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Serilog;
 using Serilog.Context;
 
@@ -8,6 +9,13 @@ public sealed class RequestLoggingMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context)
     {
+        var endpointMetadata = context.GetEndpoint();
+        if (endpointMetadata?.Metadata.GetMetadata<ControllerActionDescriptor>() is null)
+        {
+            await next(context);
+            return;
+        }
+
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         string userName = context.User.Identity?.Name ?? "Anonymous";

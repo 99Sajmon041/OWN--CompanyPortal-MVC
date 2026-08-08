@@ -35,9 +35,9 @@
                     <thead class="table-light">
                         <tr>
                             <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                            <grid-sort property="EmployeeFullName" label="@Html.DisplayNameFor(x => x.Items.First().EmployeeFullName)" />
-                            <grid-sort property="DeviceName" label="@Html.DisplayNameFor(x => x.Items.First().DeviceName)" />
-                            <grid-sort property="SerialNumber" label="@Html.DisplayNameFor(x => x.Items.First().SerialNumber)" />
+                            <grid-sort property="Employee.LastName" label="@Html.DisplayNameFor(x => x.Items.First().EmployeeFullName)" />
+                            <grid-sort property="Device.DeviceName" label="@Html.DisplayNameFor(x => x.Items.First().DeviceName)" />
+                            <grid-sort property="Device.SerialNumber" label="@Html.DisplayNameFor(x => x.Items.First().SerialNumber)" />
                             <grid-sort property="AssignedAt" label="@Html.DisplayNameFor(x => x.Items.First().AssignedAt)" />
                             <grid-sort property="ReturnedAt" label="@Html.DisplayNameFor(x => x.Items.First().ReturnedAt)" />
                             <grid-sort property="Note" label="@Html.DisplayNameFor(x => x.Items.First().Note)" />

@@ -50,15 +50,11 @@ public sealed class GridSortTagHelper(IUrlHelperFactory urlHelperFactory) : TagH
         output.Content.SetHtmlContent($$"""
             {{Label}}
 
-            <a href="{{ascendingUrl}}"
-               class="text-decoration-none text-nowrap"
-               title="Seřadit vzestupně">
+            <a href="{{ascendingUrl}}" class="text-decoration-none text-nowrap" title="Seřadit vzestupně">
                 <i class="bi bi-arrow-up"></i>
             </a>
 
-            <a href="{{descendingUrl}}"
-               class="text-decoration-none text-nowrap"
-               title="Seřadit sestupně">
+            <a href="{{descendingUrl}}" class="text-decoration-none text-nowrap" title="Seřadit sestupně">
                 <i class="bi bi-arrow-down"></i>
             </a>
 
