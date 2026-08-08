@@ -34,18 +34,17 @@
                 <table class="table table-hover align-middle mb-0 scrollable-table">
                     <thead class="table-light">
                         <tr>
-                            <th class="grid-sort" data-sort="Id">ID</th>
-                            <th class="grid-sort" data-sort="UserName">Uživatelské jméno</th>
-                            <th class="grid-sort" data-sort="Email">E-mail</th>
-                            <th class="grid-sort" data-sort="DomainUserName">Doménový účet</th>
-                            <th class="grid-sort text-center" data-sort="IsEmployeeProfileCompleted">Profil</th>
-                            <th class="grid-sort text-center" data-sort="IsActive">Aktivní</th>
-                            <th class="grid-sort" data-sort="AccessValidUntil">Platnost přístupu</th>
-                            <th class="grid-sort" data-sort="CreatedAt">Vytvořeno</th>
+                            <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
+                            <th class="text-nowrap">User Name</th>
+                            <th class="text-nowrap">E-mail</th>
+                            <grid-sort property="DomainUserName" label="@Html.DisplayNameFor(x => x.Items.First().DomainUserName)" />
+                            <grid-sort property="IsEmployeeProfileCompleted" label="@Html.DisplayNameFor(x => x.Items.First().IsEmployeeProfileCompleted)" />
+                            <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />
+                            <grid-sort property="AccessValidUntil" label="@Html.DisplayNameFor(x => x.Items.First().AccessValidUntil)" />
+                            <grid-sort property="CreatedAt" label="@Html.DisplayNameFor(x => x.Items.First().CreatedAt)" />
                             <th class="text-end">Akce</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         @if (Model.Items.Any())
                         {
