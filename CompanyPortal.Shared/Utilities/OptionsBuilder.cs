@@ -32,8 +32,8 @@ public static class OptionsBuilder
     {
         return
         [
-            AppRoles.HR,
-            AppRoles.Reception,
+            AppRoles.HRManager,
+            AppRoles.ReceptionManager,
             AppRoles.LunchManager,
             AppRoles.AttendanceManager,
             AppRoles.PayrollManager
