@@ -5,7 +5,7 @@ namespace CompanyPortal.Application.Models.Employee;
 
 public sealed class EmployeeViewModel
 {
-        [Display(Name = "ID")]
+    [Display(Name = "ID")]
     public int Id { get; set; }
 
     [Display(Name = "Osobní číslo")]
@@ -34,6 +34,9 @@ public sealed class EmployeeViewModel
 
     [Display(Name = "Jméno nadřízeného")]
     public string? SupervisorName { get; set; }
+
+    // Property to link Supervisor employee
+    public int? SupervisorId { get; set; }
 
     [Display(Name = "Obrázek zaměstnance")]
     public string ImageUrl { get; set; } = default!;

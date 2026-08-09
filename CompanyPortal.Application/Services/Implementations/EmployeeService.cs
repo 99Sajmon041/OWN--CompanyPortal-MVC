@@ -62,10 +62,24 @@ public sealed class EmployeeService(
         }
 
         var employeeVm = mapper.Map<EmployeeViewModel>(employee);
-
         var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
         employeeVm.Roles = roles.ToList();
-        employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct) ?? "Zatím není určen";
+
+        if (employee.Position.PositionLevel == PositionLevel.GroupLeader)
+        {
+            employeeVm.SupervisorName = "Já (vedoucí týmu)";
+        }
+        else if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            employeeVm.SupervisorName = "Já (Administrátor)";
+        }
+        else
+        {
+            var (supervisorName, supervisorId) = await unitOfWork.EmployeeRepository.GetGroupLeaderAsync(employee.Position.DepartmentId, ct);
+
+            employeeVm.SupervisorId = supervisorId;
+            employeeVm.SupervisorName = supervisorName ?? "Zatím není určen";
+        }
 
         var employeeDevices = await unitOfWork.EmployeeDeviceRepository.GetBorrowedByEmployeeIdAsync(id, ct);
         employeeVm.EmployeeDevices = mapper.Map<List<EmployeeDeviceViewModel>>(employeeDevices);
@@ -378,7 +392,6 @@ public sealed class EmployeeService(
         }
 
         var employeeVm = mapper.Map<EmployeeProfileViewModel>(employee);
-
         var roles = await roleAssignmentService.GetUserRolesAsync(employee.ApplicationUserId, ct);
         employeeVm.Roles = roles.ToList();
 
@@ -386,18 +399,21 @@ public sealed class EmployeeService(
         {
             employeeVm.SupervisorName = "Já (vedoucí týmu)";
         }
+        else if (employee.Position.PositionLevel == PositionLevel.Administrator)
+        {
+            employeeVm.SupervisorName = "Já (Administrátor)";
+        }
         else
         {
-            employeeVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(employee.Position.DepartmentId, ct)
-                ?? "Zatím není určen";
+            var (supervisorName, supervisorId) = await unitOfWork.EmployeeRepository.GetGroupLeaderAsync(employee.Position.DepartmentId, ct);
+
+            employeeVm.SupervisorId = supervisorId;
+            employeeVm.SupervisorName = supervisorName ?? "Zatím není určen";
         }
 
         var subordinates = await unitOfWork.EmployeeRepository.GetAllByDepartmentAsync(employee.Position.DepartmentId, employee.Id, ct);
         if (subordinates.Count > 0)
         {
-
-
-
             employeeVm.SubordinateEmployees = subordinates.Select(x => new EmployeeShortViewModel
             {
                 Id = x.Id,

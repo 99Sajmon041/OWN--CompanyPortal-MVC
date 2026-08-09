@@ -37,6 +37,9 @@ public sealed class EmployeeProfileViewModel
     [Display(Name = "Nadřízený")]
     public string? SupervisorName { get; set; }
 
+    // Property to link Supervisor employee
+    public int? SupervisorId { get; set; }
+
     [Display(Name = "Fotografie")]
     public string ImageUrl { get; set; } = default!;
 

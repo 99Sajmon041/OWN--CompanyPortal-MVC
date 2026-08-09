@@ -53,7 +53,11 @@ public sealed class DepartmentService(IUnitOfWork unitOfWork, IMapper mapper) : 
         }
 
         var deparmentVm = mapper.Map<DepartmentDetailViewModel>(department);
-        deparmentVm.SupervisorName = await unitOfWork.EmployeeRepository.GetGroupLeaderNameAsync(id, ct) ?? "Není určen";
+
+        var (supervisorName, supervisorId) = await unitOfWork.EmployeeRepository.GetGroupLeaderAsync(id, ct);
+
+        deparmentVm.SupervisorId = supervisorId;
+        deparmentVm.SupervisorName = supervisorName ?? "Zatím není určen";
 
         return deparmentVm;
     }

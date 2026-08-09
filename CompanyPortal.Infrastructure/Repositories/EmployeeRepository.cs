@@ -71,15 +71,21 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
                 ct);
     }
 
-    public async Task<string?> GetGroupLeaderNameAsync(int deparmentId, CancellationToken ct)
+    public async Task<(string, int)> GetGroupLeaderAsync(int departmentId, CancellationToken ct)
     {
-        return await _context.Employees
+        var leader = await _context.Employees
             .Where(x =>
                 x.IsActive &&
                 x.Position.IsActive &&
-                x.Position.DepartmentId == deparmentId &&
+                x.Position.DepartmentId == departmentId &&
                 x.Position.PositionLevel == PositionLevel.GroupLeader)
-            .Select(x => x.FirstName + " " + x.LastName)
             .FirstOrDefaultAsync(ct);
+
+        if (leader == null)
+        {
+            return (string.Empty, 0);
+        }
+
+        return ($"{leader.FirstName} {leader.LastName}", leader.Id);
     }
 }

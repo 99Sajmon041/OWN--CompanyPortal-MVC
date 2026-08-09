@@ -35,8 +35,8 @@
                     <thead class="table-light">
                         <tr>
                             <grid-sort property="Id" label="@Html.DisplayNameFor(x => x.Items.First().Id)" />
-                            <th class="text-nowrap">User Name</th>
-                            <th class="text-nowrap">E-mail</th>
+                            <th class="text-nowrap">@Html.DisplayNameFor(x => x.Items.First().UserName)</th>
+                            <th class="text-nowrap">@Html.DisplayNameFor(x => x.Items.First().Email)</th>
                             <grid-sort property="DomainUserName" label="@Html.DisplayNameFor(x => x.Items.First().DomainUserName)" />
                             <grid-sort property="IsEmployeeProfileCompleted" label="@Html.DisplayNameFor(x => x.Items.First().IsEmployeeProfileCompleted)" />
                             <grid-sort property="IsActive" label="@Html.DisplayNameFor(x => x.Items.First().IsActive)" />

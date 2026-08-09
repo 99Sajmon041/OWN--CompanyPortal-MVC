@@ -9,7 +9,7 @@ public interface IEmployeeRepository : IBaseRepository<Employee>
     IQueryable<Employee> GetAllWithPositionAsync();
     Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, int excludedEmployeeId, CancellationToken ct);
     Task<bool> ExistsActiveEmployeeOnPositionAsync(int positionId, CancellationToken ct);
-    Task<string?> GetGroupLeaderNameAsync(int deparmentId, CancellationToken ct);
     Task<Employee?> GetByApplicationUserIdWithDependenciesAsync(string applicationUserId, CancellationToken ct);
     Task<List<Employee>> GetAllByDepartmentAsync(int departmentId, int currentEmployeeId, CancellationToken ct);
+    Task<(string, int)> GetGroupLeaderAsync(int departmentId, CancellationToken ct);
 }
