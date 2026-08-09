@@ -78,9 +78,21 @@
                     </dd>
 
                     <dt class="col-sm-4 text-muted">Vedoucí</dt>
-                    <dd class="col-sm-8 text-primary">
-                        <i class="bi bi-person-badge me-1"></i>
-                        @Model.SupervisorName
+                    <dd class="col-sm-8">
+                        @if (Model.SupervisorId > 0)
+                        {
+                            <a asp-area="Administration" asp-controller="Employee" asp-action="Detail" asp-route-id="@Model.SupervisorId" class="text-primary text-decoration-none">
+                                <i class="bi bi-person-badge me-1"></i>
+                                @Model.SupervisorName
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                <i class="bi bi-person-x me-1"></i>
+                                Vedoucí není přiřazen
+                            </span>
+                        }
                     </dd>
                 </dl>
             </div>

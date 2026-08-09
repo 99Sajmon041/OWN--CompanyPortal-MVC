@@ -78,7 +78,7 @@ public sealed class EmployeeRepository(CompanyPortalDbContext context) : BaseRep
                 x.IsActive &&
                 x.Position.IsActive &&
                 x.Position.DepartmentId == departmentId &&
-                x.Position.PositionLevel == PositionLevel.GroupLeader)
+                x.Position.PositionLevel == PositionLevel.GroupLeader || x.Position.PositionLevel == PositionLevel.Administrator)
             .FirstOrDefaultAsync(ct);
 
         if (leader == null)
